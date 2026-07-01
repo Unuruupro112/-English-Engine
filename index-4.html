@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ЭЕШ 800 — English Prep Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --accent-950: #172554;
+    --accent-900: #1e3a8a;
+    --accent-800: #1e40af;
+    --accent-700: #1d4ed8;
+    --accent-600: #2563eb;
+    --accent-500: #3b82f6;
+    --accent-400: #60a5fa;
+    --accent-300: #93c5fd;
+    --horizon: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--accent-500) 50%, transparent) 50%, transparent 100%);
+  }
+  * { font-family: 'Inter', sans-serif; }
+  h1,h2,h3,.display { font-family: 'Space Grotesk', sans-serif; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #0f172a; }
+  ::-webkit-scrollbar-thumb { background: var(--accent-900); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent-600); }
+
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn .35s ease; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(6px);} to {opacity:1; transform:translateY(0);} }
+
+  .nav-link { transition: all .18s ease; }
+  .nav-link.active-nav {
+    background: color-mix(in srgb, var(--accent-700) 30%, transparent);
+    color: #eff6ff;
+  }
+  .nav-link:not(.active-nav):hover { background: #1e293b88; }
+  .nav-icon-wrap { transition: all .18s ease; }
+  .nav-link.active-nav .nav-icon-wrap {
+    background: color-mix(in srgb, var(--accent-500) 25%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-400) 40%, transparent);
+  }
+
+  .horizon-line {
+    height: 1px;
+    background: var(--horizon);
+  }
+
+  .topic-card { transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+  .topic-card:hover { transform: translateY(-3px); border-color: var(--accent-500); box-shadow: 0 8px 24px -8px color-mix(in srgb, var(--accent-700) 33%, transparent); }
+
+  .fade-panel { animation: fadeIn .3s ease; }
+
+  input[type=radio] { accent-color: var(--accent-500); }
+
+  .xp-fill { transition: width .6s cubic-bezier(.4,0,.2,1); }
+  .xp-gradient { background-image: linear-gradient(to right, var(--accent-600), var(--accent-400)) !important; }
+  .hero-panel { background-image: linear-gradient(to bottom right, color-mix(in srgb, var(--accent-950) 70%, transparent), #0f172a) !important; }
+  .cefr-panel { background-image: linear-gradient(to bottom right, color-mix(in srgb, var(--accent-950) 60%, transparent), #0f172a) !important; }
+  .timer-ring { transition: stroke-dashoffset 1s linear; }
+
+  .quiz-option { transition: all .15s ease; cursor: pointer; }
+  .quiz-option:hover { border-color: var(--accent-400); background: #1e293b; }
+  .quiz-option.correct-answer { border-color: #34d399 !important; background: #064e3b55 !important; }
+  .quiz-option.wrong-answer { border-color: #f87171 !important; background: #7f1d1d55 !important; }
+
+  .toast { animation: slideUp .3s ease, fadeOutToast .3s ease 2.4s forwards; }
+  @keyframes slideUp { from { opacity:0; transform: translateY(12px);} to {opacity:1; transform:translateY(0);} }
+  @keyframes fadeOutToast { to { opacity:0; transform: translateY(-8px);} }
+
+  /* Theme swatch buttons */
+  .theme-swatch { width: 22px; height: 22px; border-radius: 9999px; cursor: pointer; border: 2px solid transparent; transition: transform .15s ease, border-color .15s ease; }
+  .theme-swatch:hover { transform: scale(1.12); }
+  .theme-swatch.active-swatch { border-color: #ffffff; }
+
+  /* Tailwind utility overrides so the accent theme propagates everywhere */
+  .bg-blue-500{background-color:var(--accent-500) !important}
+  .bg-blue-600{background-color:var(--accent-600) !important}
+  .bg-blue-950{background-color:var(--accent-950) !important}
+  .bg-blue-950\/40{background-color:color-mix(in srgb, var(--accent-950) 40%, transparent) !important}
+  .bg-blue-950\/60{background-color:color-mix(in srgb, var(--accent-950) 60%, transparent) !important}
+  .border-blue-400{border-color:var(--accent-400) !important}
+  .border-blue-500{border-color:var(--accent-500) !important}
+  .border-blue-700{border-color:var(--accent-700) !important}
+  .border-blue-800{border-color:var(--accent-800) !important}
+  .border-blue-900\/50{border-color:color-mix(in srgb, var(--accent-900) 50%, transparent) !important}
+  .border-blue-900\/60{border-color:color-mix(in srgb, var(--accent-900) 60%, transparent) !important}
+  .text-blue-300{color:var(--accent-300) !important}
+  .text-blue-400{color:var(--accent-400) !important}
+  .hover\:bg-blue-500:hover{background-color:var(--accent-500) !important}
+  .hover\:border-blue-700:hover{border-color:var(--accent-700) !important}
+  .hover\:text-blue-300:hover{color:var(--accent-300) !important}
+  .bg-indigo-500{background-color:var(--accent-500) !important}
+  .border-indigo-900\/50{border-color:color-mix(in srgb, var(--accent-900) 50%, transparent) !important}
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex">
+
+<!-- ============ SIDEBAR ============ -->
+<aside class="w-64 shrink-0 bg-blue-950/60 border-r border-blue-900/60 flex flex-col h-screen sticky top-0">
+  <div class="px-6 py-6 border-b border-blue-900/60">
+    <h1 class="display text-2xl font-bold tracking-tight text-white">ЭЕШ <span class="text-blue-400">800</span></h1>
+    <p class="text-xs text-slate-400 mt-1">English exam prep дэвтэр</p>
+  </div>
+
+  <nav class="flex-1 py-4 flex flex-col gap-1 px-3">
+    <button data-page="dashboard" class="nav-link active-nav flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-200 text-left">
+      <span class="nav-icon-wrap w-8 h-8 rounded-lg bg-slate-800/70 flex items-center justify-center text-base">🏠</span> Dashboard
+    </button>
+    <button data-page="grammar" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 text-left">
+      <span class="nav-icon-wrap w-8 h-8 rounded-lg bg-slate-800/70 flex items-center justify-center text-base">📚</span> Grammar Hub
+    </button>
+    <button data-page="simulator" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 text-left">
+      <span class="nav-icon-wrap w-8 h-8 rounded-lg bg-slate-800/70 flex items-center justify-center text-base">⏱️</span> EES Simulator
+    </button>
+    <button data-page="mistakes" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 text-left">
+      <span class="nav-icon-wrap w-8 h-8 rounded-lg bg-slate-800/70 flex items-center justify-center text-base">❌</span> Mistake Log
+      <span id="mistakeBadge" class="ml-auto text-xs bg-red-500/20 text-red-300 px-2 py-0.5 rounded-full hidden">0</span>
+    </button>
+    <button data-page="pastexams" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 text-left">
+      <span class="nav-icon-wrap w-8 h-8 rounded-lg bg-slate-800/70 flex items-center justify-center text-base">🗂️</span> Бодит ЭЕШ
+    </button>
+    <button data-page="vocab100" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 text-left">
+      <span class="nav-icon-wrap w-8 h-8 rounded-lg bg-slate-800/70 flex items-center justify-center text-base">🔤</span> 100 үг
+    </button>
+    <button data-page="studyplan" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 text-left">
+      <span class="nav-icon-wrap w-8 h-8 rounded-lg bg-slate-800/70 flex items-center justify-center text-base">🗓️</span> Study Plan
+    </button>
+  </nav>
+
+  <div class="px-6 py-4 border-t border-blue-900/60">
+    <p class="text-[10px] uppercase tracking-wide text-slate-500 mb-2">Өнгөний загвар</p>
+    <div id="themeSwatches" class="flex items-center gap-2 flex-wrap"></div>
+  </div>
+
+  <div class="px-6 py-5 border-t border-blue-900/60 text-xs text-slate-500">
+    <p>Зорилго: <span class="text-blue-400 font-semibold">800</span> оноо</p>
+    <p class="mt-1">Тогтмол дасгал хийвэл хүрнэ 💪</p>
+  </div>
+</aside>
+
+<!-- ============ MAIN ============ -->
+<div class="flex-1 flex flex-col min-h-screen">
+
+  <!-- TOP HEADER -->
+  <header class="sticky top-0 z-20 bg-slate-900/90 backdrop-blur border-b border-slate-800">
+    <div class="horizon-line"></div>
+    <div class="px-8 py-4 flex items-center justify-between flex-wrap gap-4">
+      <div>
+        <h2 id="pageTitle" class="display text-lg font-semibold text-white">Dashboard</h2>
+        <p id="pageSubtitle" class="text-xs text-slate-400">Өнөөдрийн тойм</p>
+      </div>
+
+      <div class="flex items-center gap-6">
+        <!-- Streak -->
+        <div class="flex items-center gap-2 bg-slate-800/70 border border-slate-700 rounded-lg px-3 py-2">
+          <span class="text-lg">🔥</span>
+          <div>
+            <p class="text-[10px] text-slate-400 leading-none">STREAK</p>
+            <p id="streakCount" class="mono text-sm font-bold text-amber-400 leading-tight">0 Days</p>
+          </div>
+        </div>
+
+        <!-- Level / XP -->
+        <div class="bg-slate-800/70 border border-slate-700 rounded-lg px-3 py-2 min-w-[160px]">
+          <div class="flex justify-between items-center mb-1">
+            <p class="text-[10px] text-slate-400">LVL <span id="levelNum" class="text-blue-400 font-bold">1</span></p>
+            <p id="xpText" class="mono text-[10px] text-slate-400">0/100 XP</p>
+          </div>
+          <div class="w-full h-2 bg-slate-700 rounded-full overflow-hidden">
+            <div id="xpBar" class="xp-fill xp-gradient h-full bg-gradient-to-r from-blue-600 to-blue-400 rounded-full" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 px-8 py-8 max-w-6xl w-full mx-auto">
+
+    <!-- ======================= DASHBOARD PAGE ======================= -->
+    <section id="page-dashboard" class="page active">
+      <div class="hero-panel bg-gradient-to-br from-blue-950/70 to-slate-900 border border-blue-900/50 rounded-2xl p-8 mb-8 relative overflow-hidden">
+        <div class="absolute inset-x-0 bottom-0 h-px" style="background: var(--horizon);"></div>
+        <p class="text-blue-400 text-sm font-medium mb-1">Сайн байна уу 👋</p>
+        <h3 class="display text-3xl font-bold text-white mb-2">Өнөөдөр бэлтгэлээ үргэлжлүүлье</h3>
+        <p class="text-slate-400 text-sm max-w-xl">Жижиг алхам бүр 800 онооны замд тусална. Доорх зорилтуудаа гүйцэтгэж, XP цуглуулаарай.</p>
+
+        <div class="flex flex-wrap gap-3 mt-6">
+          <button onclick="goToPage('simulator')" class="bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition">⏱️ Симулятор эхлүүлэх</button>
+          <button onclick="goToPage('grammar')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-100 text-sm font-semibold px-5 py-2.5 rounded-lg transition">📚 Дүрэм үзэх</button>
+          <button onclick="goToPage('mistakes')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-100 text-sm font-semibold px-5 py-2.5 rounded-lg transition">❌ Алдаагаа давтах</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
+        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
+          <p class="text-slate-400 text-xs mb-1">Нийт XP</p>
+          <p id="statXp" class="display text-2xl font-bold text-blue-400">0</p>
+        </div>
+        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
+          <p class="text-slate-400 text-xs mb-1">Хадгалсан алдаа</p>
+          <p id="statMistakes" class="display text-2xl font-bold text-red-400">0</p>
+        </div>
+        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
+          <p class="text-slate-400 text-xs mb-1">Дуусгасан сорил</p>
+          <p id="statTests" class="display text-2xl font-bold text-emerald-400">0</p>
+        </div>
+        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
+          <p class="text-slate-400 text-xs mb-1">Зөв хариултын хувь</p>
+          <p id="statAccuracy" class="display text-2xl font-bold text-amber-400">—</p>
+        </div>
+      </div>
+
+      <div class="cefr-panel bg-gradient-to-br from-indigo-950/60 to-slate-900 border border-indigo-900/50 rounded-2xl p-6 mb-8">
+        <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+          <h4 class="display font-semibold text-white">🎯 Таны CEFR түвшин ба ЭЕШ прогноз оноо</h4>
+          <span id="levelSampleSize" class="text-[11px] text-slate-500"></span>
+        </div>
+        <div id="levelWidgetBody" class="flex items-center gap-6 flex-wrap"></div>
+        <p class="text-[11px] text-slate-500 mt-3">* Энэ бол таны хариулсан асуултуудын нарийвчлал дээр үндэслэсэн ойролцоо тооцоолол, албан ёсны шалгалтын оноог баталгаажуулахгүй.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8">
+        <div class="bg-slate-800/40 border border-slate-700 rounded-xl p-6">
+          <h4 class="display font-semibold text-white mb-4">✅ Өнөөдрийн зорилтууд</h4>
+          <div id="taskList" class="flex flex-col gap-2"></div>
+        </div>
+
+        <div class="bg-slate-800/40 border border-slate-700 rounded-xl p-6">
+          <h4 class="display font-semibold text-white mb-1">🎯 Weak Spots</h4>
+          <p class="text-xs text-slate-500 mb-4">Хамгийн олон алдаа гарсан сэдвүүд</p>
+          <div id="weakSpotsWidget" class="flex flex-col gap-3"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= GRAMMAR HUB PAGE ======================= -->
+    <section id="page-grammar" class="page">
+      <div id="grammarListView">
+        <h3 class="display text-xl font-bold text-white mb-1">Grammar Hub</h3>
+        <p class="text-slate-400 text-sm mb-6">Ерөнхий Элсэлтийн Шалгалтын дүрмийн 18 сэдэв</p>
+        <div id="topicGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+
+      <div id="grammarDetailView" class="hidden">
+        <button onclick="closeGrammarDetail()" class="text-sm text-blue-400 hover:text-blue-300 mb-4 flex items-center gap-1">← Бүх сэдэв рүү буцах</button>
+        <div id="grammarDetailContent"></div>
+      </div>
+    </section>
+
+    <!-- ======================= EES SIMULATOR PAGE ======================= -->
+    <section id="page-simulator" class="page">
+      <div id="simIntro">
+        <h3 class="display text-xl font-bold text-white mb-1">EES Simulator</h3>
+        <p class="text-slate-400 text-sm mb-6">80 минутын хугацаатай туршилтын шалгалт. Буруу хариулсан асуултууд автоматаар Mistake Log-д хадгалагдана.</p>
+        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-8 max-w-xl">
+          <p class="text-sm text-slate-300 mb-1">Асуултын тоо: <span class="text-white font-semibold">6</span></p>
+          <p class="text-sm text-slate-300 mb-1">Хугацаа: <span class="text-white font-semibold">80:00</span></p>
+          <p class="text-sm text-slate-300 mb-6">Төрөл: <span class="text-white font-semibold">Grammar & Reading (жишиг)</span></p>
+          <button onclick="startSimulator()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-6 py-3 rounded-lg transition">▶ Шалгалт эхлүүлэх</button>
+        </div>
+      </div>
+
+      <div id="simActive" class="hidden">
+        <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+          <div>
+            <h3 class="display text-lg font-bold text-white">Симулятор ажиллаж байна</h3>
+            <p id="simProgressText" class="text-xs text-slate-400">Асуулт 1 / 6</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="bg-slate-800 border border-blue-800 rounded-lg px-4 py-2 flex items-center gap-2">
+              <span class="text-blue-400 text-sm">⏱️</span>
+              <span id="timerDisplay" class="mono text-xl font-bold text-blue-300">80:00</span>
+            </div>
+            <button onclick="pauseSimulator()" id="pauseBtn" class="bg-slate-800 border border-slate-700 hover:bg-slate-700 text-sm px-3 py-2 rounded-lg">⏸ Түр зогсоох</button>
+          </div>
+        </div>
+        <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden mb-6">
+          <div id="simProgressBar" class="h-full bg-blue-500 rounded-full xp-fill" style="width:0%"></div>
+        </div>
+        <div id="simQuestionArea" class="bg-slate-800/50 border border-slate-700 rounded-xl p-6"></div>
+      </div>
+
+      <div id="simResults" class="hidden">
+        <h3 class="display text-xl font-bold text-white mb-4">Шалгалтын дүн</h3>
+        <div id="simResultsContent" class="bg-slate-800/50 border border-slate-700 rounded-xl p-8"></div>
+      </div>
+    </section>
+
+    <!-- ======================= MISTAKE LOG PAGE ======================= -->
+    <section id="page-mistakes" class="page">
+      <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <div>
+          <h3 class="display text-xl font-bold text-white mb-1">Mistake Log</h3>
+          <p class="text-slate-400 text-sm">Дахин давтах шаардлагатай асуултууд</p>
+        </div>
+        <button onclick="clearAllMistakes()" class="text-xs text-red-400 hover:text-red-300 border border-red-900/50 hover:border-red-700 px-3 py-2 rounded-lg transition">🗑 Бүгдийг устгах</button>
+      </div>
+      <div id="mistakeListContainer" class="flex flex-col gap-3"></div>
+      <div id="mistakeEmptyState" class="hidden text-center py-16 text-slate-500">
+        <p class="text-4xl mb-3">🎯</p>
+        <p class="text-sm">Одоогоор алдаа алга. Ингээд л үргэлжлүүл!</p>
+      </div>
+    </section>
+
+    <!-- ======================= PAST EXAMS PAGE ======================= -->
+    <section id="page-pastexams" class="page">
+      <div id="pastExamListView">
+        <h3 class="display text-xl font-bold text-white mb-1">Бодит ЭЕШ материал</h3>
+        <p class="text-slate-400 text-sm mb-6">Жинхэнэ ЭЕШ-ийн Англи хэлний А хувилбарууд. Асуулт тус бүрийг сонгож, төгсгөлд оноогоо шалгаарай.</p>
+        <div id="pastExamGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+      </div>
+      <div id="pastExamDetailView" class="hidden">
+        <button onclick="closePastExamDetail()" class="text-sm text-blue-400 hover:text-blue-300 mb-4 flex items-center gap-1">← Бүх хувилбар руу буцах</button>
+        <div id="pastExamDetailContent"></div>
+      </div>
+    </section>
+
+    <!-- ======================= 100 VOCAB PAGE ======================= -->
+    <section id="page-vocab100" class="page">
+      <h3 class="display text-xl font-bold text-white mb-1">ЭЕШ-т байнга ордог 100 үг</h3>
+      <p class="text-slate-400 text-sm mb-4">Эдгээр үгс жил бүрийн шалгалтад давтагдан гардаг байнгын үгсийн жагсаалт. Цээжилсэн үгээ тэмдэглээрэй.</p>
+      <div class="flex items-center gap-3 mb-4 flex-wrap">
+        <input id="vocab100Search" type="text" placeholder="🔍 Үг хайх..." class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 flex-1 min-w-[180px]">
+        <span id="vocab100Progress" class="text-xs text-slate-400 mono"></span>
+      </div>
+      <div id="vocab100List" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+    </section>
+
+    <!-- ======================= STUDY PLAN PAGE ======================= -->
+    <section id="page-studyplan" class="page">
+      <h3 class="display text-xl font-bold text-white mb-1">Study Plan</h3>
+      <p class="text-slate-400 text-sm mb-6">Өөрийн эхлэх/дуусах огноогоор бэлтгэлийн хуанли үүсгэ. Монголын нийтээр амрах өдрүүд автоматаар алгасагдана.</p>
+
+      <div id="studyPlanSetup" class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 max-w-2xl">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5">Эхлэх огноо</label>
+            <input id="spStartDate" type="date" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5">Шалгалт/дуусах огноо</label>
+            <input id="spEndDate" type="date" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+          </div>
+        </div>
+
+        <label class="text-xs text-slate-400 block mb-1.5">Амрах өдрүүд (7 хоногт)</label>
+        <div id="spRestDays" class="flex flex-wrap gap-2 mb-4"></div>
+
+        <div class="flex items-center gap-2 mb-5 text-xs text-slate-500">
+          <span>🎌</span>
+          <span>Монголын 2026 оны нийтээр амрах өдрүүд автоматаар амралт болно.</span>
+        </div>
+
+        <button onclick="generateStudyPlan()" class="bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition">📅 Төлөвлөгөө үүсгэх</button>
+      </div>
+
+      <div id="studyPlanResult" class="hidden mt-8">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+          <div>
+            <h4 class="display text-lg font-bold text-white">Таны бэлтгэлийн хуанли</h4>
+            <p id="spProgressText" class="text-xs text-slate-400 mt-1"></p>
+          </div>
+          <button onclick="resetStudyPlan()" class="text-xs text-red-400 hover:text-red-300 border border-red-900/50 hover:border-red-700 px-3 py-2 rounded-lg transition">🗑 Дахин тохируулах</button>
+        </div>
+        <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden mb-6">
+          <div id="spProgressBar" class="xp-fill xp-gradient h-full bg-gradient-to-r from-blue-600 to-blue-400 rounded-full" style="width:0%"></div>
+        </div>
+        <div id="studyPlanDays" class="flex flex-col gap-4"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Toast container -->
+<div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 items-end"></div>
+
+<script>
+/* =========================================================================
+   ЭЕШ 800 — State Management
+   All persistent data lives under one localStorage key.
+   ========================================================================= */
+const STORAGE_KEY = 'ees800_state_v1';
+
+function defaultState() {
+  return {
+    xp: 0,
+    streak: 0,
+    lastActiveDate: null,       // 'YYYY-MM-DD'
+    testsCompleted: 0,
+    tasksDoneToday: {},         // { taskId: true }
+    tasksDate: null,            // date the tasksDoneToday applies to
+    mistakes: [],               // { id, topic, question, options, correctIndex, chosenIndex, date }
+    totalAnswered: 0,           // running count of all quiz/sim/exam questions answered
+    totalCorrect: 0,            // running count of correct answers among those
+    vocabLearned: {},           // { word: true }
+    pastExamBest: {},           // { examKey: bestScorePercent }
+    theme: 'blue',              // selected accent color theme
+    studyPlan: null             // { startDate, endDate, restDays:[0-6], days:[{date,type,done}] }
+  };
+}
+
+let state = loadState();
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return defaultState();
+    const parsed = JSON.parse(raw);
+    return { ...defaultState(), ...parsed };
+  } catch (e) {
+    console.warn('State load failed, resetting.', e);
+    return defaultState();
+  }
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+/* Streak logic: run once per session on load */
+function updateStreakOnLoad() {
+  const today = todayStr();
+  if (state.lastActiveDate === today) {
+    // already counted today
+  } else if (state.lastActiveDate === yesterdayStr()) {
+    state.streak += 1;
+    state.lastActiveDate = today;
+  } else {
+    // missed a day or first visit
+    state.streak = state.lastActiveDate ? 1 : 1;
+    state.lastActiveDate = today;
+  }
+  // reset daily tasks if new day
+  if (state.tasksDate !== today) {
+    state.tasksDate = today;
+    state.tasksDoneToday = {};
+  }
+  saveState();
+}
+
+function yesterdayStr() {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+function addXp(amount) {
+  const prevLevel = Math.floor(state.xp / 100) + 1;
+  state.xp += amount;
+  const newLevel = Math.floor(state.xp / 100) + 1;
+  saveState();
+  renderHeaderStats();
+  showToast(`+${amount} XP`, 'xp');
+  if (newLevel > prevLevel) {
+    setTimeout(() => showToast(`🎉 Шинэ түвшинд гарлаа! LVL ${newLevel}`, 'success'), 350);
+  }
+}
+
+/* =========================================================================
+   CEFR LEVEL & PREDICTED EES SCORE
+   Tracks every answered question (Grammar Hub quizzes, Simulator, Past
+   Exams) into a single running accuracy figure and maps that accuracy to
+   an approximate CEFR band + predicted /800 EES score. This is only an
+   estimate to give the student a sense of progress, not an official score.
+   ========================================================================= */
+function trackAnswer(isCorrect) {
+  state.totalAnswered += 1;
+  if (isCorrect) state.totalCorrect += 1;
+  saveState();
+  renderLevelWidget();
+}
+
+function getLevelInfo() {
+  const total = state.totalAnswered;
+  const MIN_SAMPLE = 10;
+  if (total < MIN_SAMPLE) {
+    return { enough: false, needed: MIN_SAMPLE - total, total };
+  }
+  const acc = state.totalCorrect / total;
+  let level, color;
+  if (acc < 0.40)      { level = 'A1'; color = 'text-slate-400'; }
+  else if (acc < 0.55) { level = 'A2'; color = 'text-amber-400'; }
+  else if (acc < 0.65) { level = 'B1'; color = 'text-blue-400'; }
+  else if (acc < 0.75) { level = 'B2'; color = 'text-blue-300'; }
+  else if (acc < 0.85) { level = 'C1'; color = 'text-emerald-400'; }
+  else                  { level = 'C2'; color = 'text-emerald-300'; }
+  const score = Math.round((acc * 800) / 10) * 10;
+  return { enough: true, level, color, acc, score, total };
+}
+
+function renderLevelWidget() {
+  const body = document.getElementById('levelWidgetBody');
+  const sample = document.getElementById('levelSampleSize');
+  if (!body) return;
+  const info = getLevelInfo();
+
+  if (!info.enough) {
+    sample.textContent = '';
+    body.innerHTML = `
+      <div class="flex-1 min-w-[220px]">
+        <p class="text-sm text-slate-300">Түвшин тогтоохын тулд дор хаяж <span class="text-white font-semibold">${info.needed}</span> асуулт хариулаарай (Grammar Hub, Simulator, эсвэл Бодит ЭЕШ).</p>
+        <div class="w-full h-2 bg-slate-700 rounded-full overflow-hidden mt-3">
+          <div class="h-full bg-indigo-500 rounded-full xp-fill" style="width:${(info.total / 10) * 100}%"></div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  sample.textContent = `${info.total} асуултын дүн дээр`;
+  body.innerHTML = `
+    <div class="flex items-center gap-4">
+      <div class="w-16 h-16 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center">
+        <span class="display text-2xl font-bold ${info.color}">${info.level}</span>
+      </div>
+      <div>
+        <p class="text-xs text-slate-400">CEFR ойролцоо түвшин</p>
+        <p class="text-sm text-slate-300">Зөв хариулт: <span class="text-white font-semibold">${Math.round(info.acc * 100)}%</span></p>
+      </div>
+    </div>
+    <div class="h-10 w-px bg-slate-700 hidden sm:block"></div>
+    <div>
+      <p class="text-xs text-slate-400">Одоогийн байдлаар ЭЕШ өгвөл</p>
+      <p class="display text-3xl font-bold text-white">~${info.score} <span class="text-base text-slate-400 font-normal">/ 800</span></p>
+    </div>
+  `;
+}
+
+/* =========================================================================
+   Toast notifications
+   ========================================================================= */
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const colors = {
+    xp: 'bg-blue-600 border-blue-400',
+    success: 'bg-emerald-600 border-emerald-400',
+    error: 'bg-red-600 border-red-400',
+    info: 'bg-slate-700 border-slate-500'
+  };
+  const el = document.createElement('div');
+  el.className = `toast ${colors[type] || colors.info} text-white text-sm font-medium px-4 py-2.5 rounded-lg border shadow-lg`;
+  el.textContent = message;
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 2800);
+}
+
+/* =========================================================================
+   THEME SYSTEM — accent color picker
+   ========================================================================= */
+const THEMES = {
+  blue:     { label: 'Цэнхэр',  950:'#172554', 900:'#1e3a8a', 800:'#1e40af', 700:'#1d4ed8', 600:'#2563eb', 500:'#3b82f6', 400:'#60a5fa', 300:'#93c5fd' },
+  purple:   { label: 'Ягаан',   950:'#3b0764', 900:'#581c87', 800:'#6b21a8', 700:'#7e22ce', 600:'#9333ea', 500:'#a855f7', 400:'#c084fc', 300:'#d8b4fe' },
+  emerald:  { label: 'Ногоон',  950:'#022c22', 900:'#064e3b', 800:'#065f46', 700:'#047857', 600:'#059669', 500:'#10b981', 400:'#34d399', 300:'#6ee7b7' },
+  rose:     { label: 'Час улаан', 950:'#4c0519', 900:'#881337', 800:'#9f1239', 700:'#be123c', 600:'#e11d48', 500:'#f43f5e', 400:'#fb7185', 300:'#fda4af' },
+  amber:    { label: 'Шар',     950:'#451a03', 900:'#78350f', 800:'#92400e', 700:'#b45309', 600:'#d97706', 500:'#f59e0b', 400:'#fbbf24', 300:'#fcd34d' },
+  cyan:     { label: 'Тэнгэрийн цэнхэр', 950:'#083344', 900:'#164e63', 800:'#155e75', 700:'#0e7490', 600:'#0891b2', 500:'#06b6d4', 400:'#22d3ee', 300:'#67e8f9' },
+  fuchsia:  { label: 'Час ягаан', 950:'#4a044e', 900:'#701a75', 800:'#86198f', 700:'#a21caf', 600:'#c026d3', 500:'#d946ef', 400:'#e879f9', 300:'#f0abfc' }
+};
+
+function applyTheme(name) {
+  const theme = THEMES[name] ? name : 'blue';
+  const t = THEMES[theme];
+  const root = document.documentElement.style;
+  [950,900,800,700,600,500,400,300].forEach(shade => root.setProperty(`--accent-${shade}`, t[shade]));
+  state.theme = theme;
+  saveState();
+  renderThemeSwatches();
+}
+
+function renderThemeSwatches() {
+  const container = document.getElementById('themeSwatches');
+  if (!container) return;
+  container.innerHTML = '';
+  Object.entries(THEMES).forEach(([key, t]) => {
+    const btn = document.createElement('button');
+    btn.className = `theme-swatch ${state.theme === key ? 'active-swatch' : ''}`;
+    btn.style.background = t[500];
+    btn.title = t.label;
+    btn.onclick = () => applyTheme(key);
+    container.appendChild(btn);
+  });
+}
+
+/* =========================================================================
+   Header rendering (streak / level / xp)
+   ========================================================================= */
+function renderHeaderStats() {
+  document.getElementById('streakCount').textContent = `${state.streak} Day${state.streak === 1 ? '' : 's'}`;
+
+  const level = Math.floor(state.xp / 100) + 1;
+  const xpIntoLevel = state.xp % 100;
+  document.getElementById('levelNum').textContent = level;
+  document.getElementById('xpText').textContent = `${xpIntoLevel}/100 XP`;
+  document.getElementById('xpBar').style.width = `${xpIntoLevel}%`;
+
+  document.getElementById('statXp').textContent = state.xp;
+  document.getElementById('statMistakes').textContent = state.mistakes.length;
+  document.getElementById('statTests').textContent = state.testsCompleted;
+  document.getElementById('statAccuracy').textContent = state.totalAnswered > 0
+    ? `${Math.round((state.totalCorrect / state.totalAnswered) * 100)}%`
+    : '—';
+
+  const badge = document.getElementById('mistakeBadge');
+  if (state.mistakes.length > 0) {
+    badge.textContent = state.mistakes.length;
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+}
+
+/* =========================================================================
+   DASHBOARD — Weak Spots widget
+   Groups saved mistakes by topic, ranks the topics with the most errors.
+   ========================================================================= */
+function renderWeakSpots() {
+  const container = document.getElementById('weakSpotsWidget');
+  if (!container) return;
+  container.innerHTML = '';
+
+  if (state.mistakes.length === 0) {
+    container.innerHTML = `<p class="text-sm text-slate-500 py-6 text-center">Одоогоор алдаа алга. Дасгал хийж эхлэхэд энд харагдана.</p>`;
+    return;
+  }
+
+  const counts = {};
+  state.mistakes.forEach(m => { counts[m.topic] = (counts[m.topic] || 0) + 1; });
+  const ranked = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const maxCount = ranked[0][1];
+
+  ranked.forEach(([topic, count]) => {
+    const pct = Math.round((count / maxCount) * 100);
+    const matchingTopic = GRAMMAR_TOPICS.find(t => t.title === topic && t.ready);
+    const row = document.createElement('div');
+    row.innerHTML = `
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-sm text-slate-200 truncate pr-2">${topic}</span>
+        <span class="text-xs text-red-400 mono shrink-0">${count} алдаа</span>
+      </div>
+      <div class="w-full h-2 bg-slate-700 rounded-full overflow-hidden">
+        <div class="h-full bg-red-500/70 rounded-full" style="width:${pct}%"></div>
+      </div>
+    `;
+    if (matchingTopic) {
+      row.classList.add('cursor-pointer');
+      row.onclick = () => { goToPage('grammar'); openGrammarDetail(matchingTopic.id); };
+    }
+    container.appendChild(row);
+  });
+}
+
+/* =========================================================================
+   Navigation between pages
+   ========================================================================= */
+function goToPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(`page-${pageId}`).classList.add('active');
+
+  document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active-nav'));
+  document.querySelector(`.nav-link[data-page="${pageId}"]`).classList.add('active-nav');
+
+  const titles = {
+    dashboard: ['Dashboard', 'Өнөөдрийн тойм'],
+    grammar: ['Grammar Hub', '18 сэдэвт дүрмийн товчоо'],
+    simulator: ['EES Simulator', '80 минутын дасгал шалгалт'],
+    mistakes: ['Mistake Log', 'Дахин давтах асуултууд'],
+    pastexams: ['Бодит ЭЕШ', '2024, 2025 оны жинхэнэ шалгалтууд'],
+    vocab100: ['100 үг', 'ЭЕШ-т байнга ордог үгсийн сан'],
+    studyplan: ['Study Plan', 'Хуанли дээр суурилсан бэлтгэлийн төлөвлөгөө']
+  };
+  document.getElementById('pageTitle').textContent = titles[pageId][0];
+  document.getElementById('pageSubtitle').textContent = titles[pageId][1];
+
+  if (pageId === 'mistakes') renderMistakeLog();
+  if (pageId === 'grammar') closeGrammarDetail();
+  if (pageId === 'pastexams') closePastExamDetail();
+  if (pageId === 'dashboard') { renderLevelWidget(); renderWeakSpots(); }
+  if (pageId === 'studyplan') renderStudyPlan();
+}
+
+document.querySelectorAll('.nav-link').forEach(btn => {
+  btn.addEventListener('click', () => goToPage(btn.dataset.page));
+});
+
+/* =========================================================================
+   DASHBOARD — daily tasks
+   ========================================================================= */
+const DAILY_TASKS = [
+  { id: 'grammar10', label: '10 минут дүрэм үзэх', xp: 10 },
+  { id: 'quiz3', label: 'Дор хаяж 1 сэдвийн quiz бөглөх', xp: 15 },
+  { id: 'reviewMistake', label: 'Mistake Log-оос 1 асуулт эргэж харах', xp: 10 },
+  { id: 'simPractice', label: 'Симуляторт 1 асуулт хариулах', xp: 10 }
+];
+
+function renderTaskList() {
+  const container = document.getElementById('taskList');
+  container.innerHTML = '';
+  DAILY_TASKS.forEach(task => {
+    const done = !!state.tasksDoneToday[task.id];
+    const row = document.createElement('label');
+    row.className = 'flex items-center gap-3 px-4 py-3 rounded-lg border border-slate-700 bg-slate-900/40 hover:border-blue-700 transition cursor-pointer';
+    row.innerHTML = `
+      <input type="checkbox" ${done ? 'checked' : ''} class="w-4 h-4 accent-blue-500" data-task="${task.id}">
+      <span class="text-sm ${done ? 'line-through text-slate-500' : 'text-slate-200'}">${task.label}</span>
+      <span class="ml-auto text-xs text-blue-400 mono">+${task.xp} XP</span>
+    `;
+    container.appendChild(row);
+  });
+
+  container.querySelectorAll('input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', (e) => {
+      const taskId = e.target.dataset.task;
+      const task = DAILY_TASKS.find(t => t.id === taskId);
+      const wasDone = !!state.tasksDoneToday[taskId];
+      if (e.target.checked && !wasDone) {
+        state.tasksDoneToday[taskId] = true;
+        saveState();
+        addXp(task.xp);
+      } else if (!e.target.checked && wasDone) {
+        delete state.tasksDoneToday[taskId];
+        saveState();
+      }
+      renderTaskList();
+    });
+  });
+}
+
+/* =========================================================================
+   GRAMMAR HUB — 18 topics
+   ========================================================================= */
+const GRAMMAR_TOPICS = [
+  { id: 1, title: 'Nouns', mn: 'Нэр үг', ready: true },
+  { id: 2, title: 'Article: The', mn: 'Артикль: The', ready: true },
+  { id: 3, title: 'Pronoun: It', mn: 'Төлөөний үг: It', ready: false },
+  { id: 4, title: 'Prepositional phrase', mn: 'Угтвар үгийн хэллэг', ready: false },
+  { id: 5, title: 'Adjectives', mn: 'Тэмдэг нэр', ready: false },
+  { id: 6, title: 'Adverbs', mn: 'Дайвар үг', ready: false },
+  { id: 7, title: 'To be', mn: '"To be" үйл үг', ready: false },
+  { id: 8, title: 'Verb tenses', mn: 'Цагийн хэлбэрүүд', ready: false },
+  { id: 9, title: 'Passive voice', mn: 'Идэвхгүй хэлбэр', ready: false },
+  { id: 10, title: 'Types of questions', mn: 'Асуултын төрлүүд', ready: false },
+  { id: 11, title: 'Modal verbs', mn: 'Модаль үйл үг', ready: false },
+  { id: 12, title: 'Reported speech, questions, instructions', mn: 'Шилжсэн ярианы хэлбэр', ready: false },
+  { id: 13, title: 'Conditionals', mn: 'Нөхцөлт өгүүлбэр', ready: false },
+  { id: 14, title: 'The infinitive', mn: 'Тодог үйл үг', ready: false },
+  { id: 15, title: 'The gerund', mn: 'Герунд', ready: false },
+  { id: 16, title: 'The infinitive and gerund constructions', mn: 'Тодог ба герундын хэлбэрүүд', ready: false },
+  { id: 17, title: 'The participle', mn: 'Причасти', ready: false },
+  { id: 18, title: 'ХАВСРАЛТ (Appendix)', mn: 'Нэмэлт материал', ready: false }
+];
+
+function renderTopicGrid() {
+  const grid = document.getElementById('topicGrid');
+  grid.innerHTML = '';
+  GRAMMAR_TOPICS.forEach(topic => {
+    const card = document.createElement('div');
+    card.className = 'topic-card bg-slate-800/50 border border-slate-700 rounded-xl p-5 cursor-pointer';
+    card.onclick = () => openGrammarDetail(topic.id);
+    card.innerHTML = `
+      <div class="flex items-start justify-between mb-3">
+        <span class="mono text-xs text-blue-400 bg-blue-950 border border-blue-800 rounded px-2 py-0.5">${String(topic.id).padStart(2, '0')}</span>
+        ${topic.ready
+          ? '<span class="text-[10px] bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full">Бэлэн</span>'
+          : '<span class="text-[10px] bg-slate-700/50 text-slate-400 px-2 py-0.5 rounded-full">Тун удахгүй</span>'}
+      </div>
+      <h4 class="font-semibold text-slate-100 text-sm mb-1">${topic.title}</h4>
+      <p class="text-xs text-slate-400">${topic.mn}</p>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function openGrammarDetail(topicId) {
+  document.getElementById('grammarListView').classList.add('hidden');
+  const detailView = document.getElementById('grammarDetailView');
+  detailView.classList.remove('hidden');
+  const content = document.getElementById('grammarDetailContent');
+
+  if (topicId === 1) {
+    content.innerHTML = renderNounsLesson();
+  } else if (topicId === 2) {
+    content.innerHTML = renderArticleLesson();
+  } else {
+    const topic = GRAMMAR_TOPICS.find(t => t.id === topicId);
+    content.innerHTML = `
+      <div class="bg-slate-800/50 border border-slate-700 border-dashed rounded-xl p-10 text-center">
+        <p class="text-3xl mb-3">🚧</p>
+        <h3 class="display text-lg font-bold text-white mb-1">${topic.title}</h3>
+        <p class="text-slate-400 text-sm mb-1">${topic.mn}</p>
+        <p class="text-slate-500 text-xs mt-4 max-w-sm mx-auto">Энэ сэдвийн Cheat Sheet, жишээ өгүүлбэр, quiz удахгүй нэмэгдэнэ. Дараагийн шатанд энэ хэсгийг дэлгэрэнгүй бөглөх боломжтой.</p>
+      </div>
+    `;
+  }
+  content.classList.add('fade-panel');
+}
+
+function closeGrammarDetail() {
+  document.getElementById('grammarListView').classList.remove('hidden');
+  document.getElementById('grammarDetailView').classList.add('hidden');
+}
+
+/* ---------- Topic 1: Nouns ---------- */
+function renderNounsLesson() {
+  return `
+    <div class="flex items-center gap-3 mb-6">
+      <span class="mono text-xs text-blue-400 bg-blue-950 border border-blue-800 rounded px-2 py-0.5">01</span>
+      <h3 class="display text-2xl font-bold text-white">Nouns <span class="text-slate-400 text-base font-normal">— Нэр үг</span></h3>
+    </div>
+
+    <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 mb-5">
+      <h4 class="font-semibold text-blue-400 mb-3">📋 Cheat Sheet</h4>
+      <ul class="text-sm text-slate-300 space-y-2 list-disc list-inside">
+        <li><strong class="text-slate-100">Common noun</strong> — ердийн зүйл (book, city) vs <strong class="text-slate-100">Proper noun</strong> — тусгай нэр (Mongolia, John), том үсгээр эхэлнэ.</li>
+        <li><strong class="text-slate-100">Countable</strong> — тоологдох (apple → apples) vs <strong class="text-slate-100">Uncountable</strong> — тоологдохгүй (water, information, advice).</li>
+        <li><strong class="text-slate-100">Regular plural:</strong> -s / -es (cat→cats, box→boxes). <strong class="text-slate-100">Irregular:</strong> child→children, man→men, mouse→mice, foot→feet.</li>
+        <li><strong class="text-slate-100">Possessive:</strong> singular + 's (the girl's book), plural ending in -s + ' (the students' room).</li>
+        <li><strong class="text-slate-100">Collective nouns</strong> нэг бүлэг зүйлийг илэрхийлнэ: team, family, government — ихэвчлэн ганц тоогоор хэрэглэгдэнэ.</li>
+      </ul>
+    </div>
+
+    <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 mb-5">
+      <h4 class="font-semibold text-blue-400 mb-3">✏️ Жишээ өгүүлбэрүүд</h4>
+      <ul class="text-sm text-slate-300 space-y-2">
+        <li>1. The <strong class="text-blue-300">children</strong> are playing in the park.</li>
+        <li>2. I need some <strong class="text-blue-300">advice</strong> before the exam.</li>
+        <li>3. <strong class="text-blue-300">Mongolia</strong> is famous for its wide steppes.</li>
+        <li>4. The <strong class="text-blue-300">students' </strong>results were excellent this year.</li>
+        <li>5. Our <strong class="text-blue-300">team</strong> is preparing for the competition.</li>
+      </ul>
+    </div>
+
+    ${renderQuizBlock('nouns', 'Nouns', [
+      {
+        q: '1. Choose the correct plural form of "child".',
+        options: ['childs', 'childes', 'children', 'child\'s'],
+        correct: 2
+      },
+      {
+        q: '2. Which of these is an UNCOUNTABLE noun?',
+        options: ['book', 'water', 'chair', 'pen'],
+        correct: 1
+      },
+      {
+        q: '3. Choose the correct possessive form for "the room belonging to the students" (plural).',
+        options: ['the students\'s room', 'the student\'s room', 'the students\' room', 'the students room'],
+        correct: 2
+      }
+    ])}
+  `;
+}
+
+/* ---------- Topic 2: Article: The ---------- */
+function renderArticleLesson() {
+  return `
+    <div class="flex items-center gap-3 mb-6">
+      <span class="mono text-xs text-blue-400 bg-blue-950 border border-blue-800 rounded px-2 py-0.5">02</span>
+      <h3 class="display text-2xl font-bold text-white">Article: The <span class="text-slate-400 text-base font-normal">— Артикль "The"</span></h3>
+    </div>
+
+    <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 mb-5">
+      <h4 class="font-semibold text-blue-400 mb-3">📋 Cheat Sheet</h4>
+      <ul class="text-sm text-slate-300 space-y-2 list-disc list-inside">
+        <li>Ярьж буй зүйл нь <strong class="text-slate-100">тодорхой/мэдэгдэж байгаа</strong> үед "the" хэрэглэнэ: "Close <strong>the</strong> door." (тухайн өрөөний хаалга)</li>
+        <li><strong class="text-slate-100">Дэлхийд ганц</strong> зүйлийн өмнө: the sun, the moon, the sky, the internet.</li>
+        <li><strong class="text-slate-100">Дараалал/давуу зэрэг</strong> үгсийн өмнө: the first, the best, the tallest.</li>
+        <li>Ерөнхий утгаар олон тоо эсвэл тоологдохгүй нэр үгийн өмнө <strong class="text-slate-100">"the" хэрэглэхгүй</strong>: "Dogs are loyal." (бүх нохой ерөнхийд нь)</li>
+        <li>Ихэнх <strong class="text-slate-100">хувийн нэрийн</strong> өмнө артикль хэрэглэхгүй: Mongolia, John — гэхдээ улс орны нэр олон тоо/бүлэг утгатай бол "the" ордог: the United States, the Philippines.</li>
+        <li><strong class="text-slate-100">Хөгжмийн зэмсэг</strong> тоглох үед: play <strong>the</strong> piano, play <strong>the</strong> guitar.</li>
+      </ul>
+    </div>
+
+    <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 mb-5">
+      <h4 class="font-semibold text-blue-400 mb-3">✏️ Жишээ өгүүлбэрүүд</h4>
+      <ul class="text-sm text-slate-300 space-y-2">
+        <li>1. <strong class="text-blue-300">The</strong> sun rises in the east.</li>
+        <li>2. Can you pass me <strong class="text-blue-300">the</strong> book on the table?</li>
+        <li>3. She is <strong class="text-blue-300">the</strong> tallest student in our class.</li>
+        <li>4. <strong class="text-blue-300">Ø</strong> Dogs need daily exercise. <span class="text-slate-500">(артикльгүй — ерөнхий утга)</span></li>
+        <li>5. He learned to play <strong class="text-blue-300">the</strong> violin at age six.</li>
+      </ul>
+    </div>
+
+    ${renderQuizBlock('article', 'Article: The', [
+      {
+        q: '1. "I saw ___ elephant at ___ zoo yesterday." — Choose the correct pair.',
+        options: ['a / the', 'an / the', 'the / a', 'an / a'],
+        correct: 1
+      },
+      {
+        q: '2. Choose the correct sentence.',
+        options: ['Sun rises in east.', 'The Sun rises in the east.', 'A Sun rises in an east.', 'Sun rises in the east.'],
+        correct: 1
+      },
+      {
+        q: '3. Which sentence uses articles correctly?',
+        options: [
+          'The information you gave me was the useful.',
+          'She plays a piano every evening.',
+          'He is the best player on the team.',
+          'The Mongolia has beautiful steppes.'
+        ],
+        correct: 2
+      }
+    ])}
+  `;
+}
+
+/* ---------- Generic quiz block builder ----------
+   Note: quiz question data is kept in a registry (QUIZ_DATA) instead of being
+   round-tripped through onclick="" attribute strings, so we never need to
+   escape quotes/apostrophes inside question text or options. Handlers only
+   ever receive simple primitives (topicKey, qIndex, oIndex). */
+const QUIZ_DATA = {};       // { topicKey: [ {q, options, correct}, ... ] }
+const QUIZ_TOPIC_LABEL = {}; // { topicKey: 'Nouns' }
+
+function renderQuizBlock(topicKey, topicLabel, questions) {
+  QUIZ_DATA[topicKey] = questions;
+  QUIZ_TOPIC_LABEL[topicKey] = topicLabel;
+
+  let html = `<div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+    <h4 class="font-semibold text-blue-400 mb-4">🧠 Quiz — 3 асуулт</h4>`;
+
+  questions.forEach((item, qIndex) => {
+    html += `
+      <div class="mb-6 last:mb-0" data-quiz="${topicKey}" data-qindex="${qIndex}">
+        <p class="text-sm font-medium text-slate-100 mb-3">${item.q}</p>
+        <div class="flex flex-col gap-2">
+          ${item.options.map((opt, oIndex) => `
+            <div class="quiz-option border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-slate-200"
+                 data-opt-index="${oIndex}"
+                 onclick="selectQuizOption('${topicKey}', ${qIndex}, ${oIndex})">
+              ${opt}
+            </div>
+          `).join('')}
+        </div>
+        <div id="feedback-${topicKey}-${qIndex}" class="mt-2 text-xs"></div>
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+  return html;
+}
+
+function selectQuizOption(topicKey, qIndex, chosenIndex) {
+  const wrapper = document.querySelector(`[data-quiz="${topicKey}"][data-qindex="${qIndex}"]`);
+  if (!wrapper || wrapper.dataset.answered === 'true') return; // prevent re-answering
+  wrapper.dataset.answered = 'true';
+
+  const item = QUIZ_DATA[topicKey][qIndex];
+  const correctIndex = item.correct;
+
+  const options = wrapper.querySelectorAll('.quiz-option');
+  options.forEach(opt => {
+    const idx = parseInt(opt.dataset.optIndex);
+    opt.classList.remove('cursor-pointer');
+    opt.onclick = null;
+    if (idx === correctIndex) opt.classList.add('correct-answer');
+    if (idx === chosenIndex && chosenIndex !== correctIndex) opt.classList.add('wrong-answer');
+  });
+
+  const feedback = document.getElementById(`feedback-${topicKey}-${qIndex}`);
+
+  trackAnswer(chosenIndex === correctIndex);
+
+  if (chosenIndex === correctIndex) {
+    feedback.innerHTML = `<span class="text-emerald-400">✔ Зөв хариулт! +15 XP</span>`;
+    addXp(15);
+  } else {
+    feedback.innerHTML = `
+      <span class="text-red-400">✘ Буруу. Зөв хариулт тодотгосон байна.</span>
+      <button class="ml-2 text-blue-400 hover:text-blue-300 underline" onclick="saveMistakeFromQuiz('${topicKey}', ${qIndex}, ${chosenIndex}, this)">Mistake Log-д хадгалах</button>
+    `;
+    addXp(5);
+  }
+}
+
+function saveMistakeFromQuiz(topicKey, qIndex, chosenIndex, btnEl) {
+  const item = QUIZ_DATA[topicKey][qIndex];
+  const topicLabel = QUIZ_TOPIC_LABEL[topicKey];
+  addMistake(topicLabel, item.q, item.options, item.correct, chosenIndex);
+  btnEl.textContent = '✓ Хадгалагдлаа';
+  btnEl.classList.add('text-emerald-400');
+  btnEl.onclick = null;
+}
+
+function addMistake(topic, question, options, correctIndex, chosenIndex) {
+  state.mistakes.push({
+    id: 'm_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+    topic, question, options, correctIndex, chosenIndex,
+    date: todayStr()
+  });
+  saveState();
+  renderHeaderStats();
+  showToast('Mistake Log-д хадгалагдлаа', 'error');
+}
+
+/* =========================================================================
+   EES SIMULATOR
+   ========================================================================= */
+const SIM_QUESTIONS = [
+  {
+    q: 'Choose the correct word: "She ___ to school every day."',
+    options: ['go', 'goes', 'going', 'gone'],
+    correct: 1
+  },
+  {
+    q: 'Choose the correct passive form: "The letter ___ yesterday."',
+    options: ['was written', 'wrote', 'is writing', 'has write'],
+    correct: 0
+  },
+  {
+    q: 'Select the correct modal verb: "You ___ finish your homework before playing."',
+    options: ['can', 'must', 'may', 'would'],
+    correct: 1
+  },
+  {
+    q: 'Choose the correct conditional: "If it rains, I ___ stay home."',
+    options: ['will', 'would', 'am', 'was'],
+    correct: 0
+  },
+  {
+    q: 'Choose the correct reported speech: He said that he ___ tired.',
+    options: ['is', 'was', 'be', 'were'],
+    correct: 1
+  },
+  {
+    q: 'Choose the correct gerund usage: "I enjoy ___ books."',
+    options: ['read', 'to read', 'reading', 'reads'],
+    correct: 2
+  }
+];
+
+let simState = {
+  running: false,
+  paused: false,
+  secondsLeft: 80 * 60,
+  currentQ: 0,
+  answers: [],   // { chosenIndex }
+  timerId: null
+};
+
+function startSimulator() {
+  simState = { running: true, paused: false, secondsLeft: 80 * 60, currentQ: 0, answers: [], timerId: null };
+  document.getElementById('simIntro').classList.add('hidden');
+  document.getElementById('simResults').classList.add('hidden');
+  document.getElementById('simActive').classList.remove('hidden');
+  renderSimQuestion();
+  tickSimTimer();
+  simState.timerId = setInterval(tickSimTimer, 1000);
+}
+
+function tickSimTimer() {
+  if (simState.paused) return;
+  if (simState.secondsLeft <= 0) {
+    finishSimulator();
+    return;
+  }
+  simState.secondsLeft--;
+  const mins = Math.floor(simState.secondsLeft / 60);
+  const secs = simState.secondsLeft % 60;
+  const display = document.getElementById('timerDisplay');
+  display.textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+  if (simState.secondsLeft <= 60) display.classList.add('text-red-400');
+}
+
+function pauseSimulator() {
+  simState.paused = !simState.paused;
+  document.getElementById('pauseBtn').textContent = simState.paused ? '▶ Үргэлжлүүлэх' : '⏸ Түр зогсоох';
+}
+
+function renderSimQuestion() {
+  const q = SIM_QUESTIONS[simState.currentQ];
+  const area = document.getElementById('simQuestionArea');
+  document.getElementById('simProgressText').textContent = `Асуулт ${simState.currentQ + 1} / ${SIM_QUESTIONS.length}`;
+  document.getElementById('simProgressBar').style.width = `${(simState.currentQ / SIM_QUESTIONS.length) * 100}%`;
+
+  area.innerHTML = `
+    <p class="text-base font-medium text-slate-100 mb-5">${q.q}</p>
+    <div id="simOptions" class="flex flex-col gap-2 mb-6">
+      ${q.options.map((opt, i) => `
+        <div class="quiz-option border border-slate-700 rounded-lg px-4 py-3 text-sm text-slate-200" data-i="${i}" onclick="chooseSimOption(${i})">${opt}</div>
+      `).join('')}
+    </div>
+    <div class="flex justify-end">
+      <button id="simNextBtn" disabled class="bg-blue-600 disabled:bg-slate-700 disabled:text-slate-500 hover:bg-blue-500 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition">
+        ${simState.currentQ === SIM_QUESTIONS.length - 1 ? 'Шалгалт дуусгах' : 'Дараах асуулт →'}
+      </button>
+    </div>
+  `;
+  document.getElementById('simNextBtn').addEventListener('click', nextSimQuestion);
+}
+
+let simSelectedOption = null;
+function chooseSimOption(i) {
+  simSelectedOption = i;
+  document.querySelectorAll('#simOptions .quiz-option').forEach(el => {
+    el.classList.remove('border-blue-500', 'bg-blue-950/40');
+  });
+  const el = document.querySelector(`#simOptions .quiz-option[data-i="${i}"]`);
+  el.classList.add('border-blue-500', 'bg-blue-950/40');
+  document.getElementById('simNextBtn').disabled = false;
+}
+
+function nextSimQuestion() {
+  simState.answers.push({ chosenIndex: simSelectedOption });
+  simSelectedOption = null;
+  if (simState.currentQ < SIM_QUESTIONS.length - 1) {
+    simState.currentQ++;
+    renderSimQuestion();
+  } else {
+    finishSimulator();
+  }
+}
+
+function finishSimulator() {
+  clearInterval(simState.timerId);
+  document.getElementById('simActive').classList.add('hidden');
+  document.getElementById('simResults').classList.remove('hidden');
+
+  // if timer ran out before all answered, pad remaining as unanswered (-1)
+  while (simState.answers.length < SIM_QUESTIONS.length) {
+    simState.answers.push({ chosenIndex: -1 });
+  }
+
+  let correctCount = 0;
+  let resultRows = '';
+  SIM_QUESTIONS.forEach((q, i) => {
+    const ans = simState.answers[i];
+    const isCorrect = ans.chosenIndex === q.correct;
+    trackAnswer(isCorrect);
+    if (isCorrect) correctCount++;
+    else {
+      addMistake('EES Simulator', q.q, q.options, q.correct, ans.chosenIndex);
+    }
+    resultRows += `
+      <div class="flex items-start gap-3 py-3 border-b border-slate-700 last:border-0">
+        <span class="text-lg">${isCorrect ? '✅' : '❌'}</span>
+        <div class="flex-1">
+          <p class="text-sm text-slate-200">${q.q}</p>
+          <p class="text-xs text-slate-400 mt-1">Зөв хариулт: <span class="text-emerald-400">${q.options[q.correct]}</span>
+          ${ans.chosenIndex >= 0 && !isCorrect ? `— Таны хариулт: <span class="text-red-400">${q.options[ans.chosenIndex]}</span>` : ''}
+          ${ans.chosenIndex === -1 ? '<span class="text-amber-400">— Хариулаагүй</span>' : ''}
+          </p>
+        </div>
+      </div>
+    `;
+  });
+
+  const scorePercent = Math.round((correctCount / SIM_QUESTIONS.length) * 100);
+  state.testsCompleted += 1;
+  saveState();
+  addXp(25);
+
+  document.getElementById('simResultsContent').innerHTML = `
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+      <div>
+        <p class="text-slate-400 text-sm">Таны оноо</p>
+        <p class="display text-4xl font-bold text-blue-400">${correctCount}/${SIM_QUESTIONS.length} <span class="text-lg text-slate-400 font-normal">(${scorePercent}%)</span></p>
+      </div>
+      <button onclick="resetSimulator()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-sm px-4 py-2.5 rounded-lg">🔁 Дахин эхлүүлэх</button>
+    </div>
+    <div>${resultRows}</div>
+  `;
+  renderHeaderStats();
+}
+
+function resetSimulator() {
+  document.getElementById('simResults').classList.add('hidden');
+  document.getElementById('simIntro').classList.remove('hidden');
+}
+
+/* =========================================================================
+   MISTAKE LOG
+   ========================================================================= */
+function renderMistakeLog() {
+  const container = document.getElementById('mistakeListContainer');
+  const emptyState = document.getElementById('mistakeEmptyState');
+  container.innerHTML = '';
+
+  if (state.mistakes.length === 0) {
+    emptyState.classList.remove('hidden');
+    return;
+  }
+  emptyState.classList.add('hidden');
+
+  // newest first
+  [...state.mistakes].reverse().forEach(m => {
+    const card = document.createElement('div');
+    card.className = 'bg-slate-800/50 border border-slate-700 rounded-xl p-5';
+    const chosenText = m.chosenIndex >= 0 && m.options[m.chosenIndex] ? m.options[m.chosenIndex] : '— (хариулаагүй)';
+    card.innerHTML = `
+      <div class="flex items-start justify-between gap-3 mb-2">
+        <span class="text-[10px] bg-blue-950 border border-blue-800 text-blue-400 rounded-full px-2 py-0.5">${m.topic}</span>
+        <button onclick="removeMistake('${m.id}')" class="text-xs text-slate-500 hover:text-red-400">✕ устгах</button>
+      </div>
+      <p class="text-sm text-slate-100 mb-3">${m.question}</p>
+      <div class="flex flex-col gap-1 text-xs">
+        <p class="text-red-400">Таны хариулт: ${chosenText}</p>
+        <p class="text-emerald-400">Зөв хариулт: ${m.options[m.correctIndex]}</p>
+      </div>
+      <p class="text-[10px] text-slate-500 mt-3">${m.date}</p>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function removeMistake(id) {
+  state.mistakes = state.mistakes.filter(m => m.id !== id);
+  saveState();
+  renderHeaderStats();
+  renderMistakeLog();
+  showToast('Устгагдлаа', 'info');
+}
+
+function clearAllMistakes() {
+  if (state.mistakes.length === 0) return;
+  if (!confirm('Бүх алдааг устгах уу? Энэ үйлдлийг буцаах боломжгүй.')) return;
+  state.mistakes = [];
+  saveState();
+  renderHeaderStats();
+  renderMistakeLog();
+  showToast('Бүх алдаа устгагдлаа', 'info');
+}
+
+/* =========================================================================
+   PAST EXAMS — 2024 & 2025 real EES English (Version A) papers
+   Answer keys below were worked out by Claude from standard English
+   grammar/vocabulary knowledge, since no official answer key was included
+   in the source PDFs — double-check against an official key if available.
+   ========================================================================= */
+const EXAM_2024 = {
+  key: 'ees2024a',
+  title: 'ЭЕШ 2024 — Хувилбар А',
+  subtitle: 'Англи хэл · Нэгдүгээр ба Хоёрдугаар хэсэг',
+  questions: [
+    { section: 'Grammar · Task 1', q: 'We didn\'t have __________ luggage – just two small bags.', options: ['-', 'many', 'a', 'any', 'much'], correct: 4 },
+    { section: 'Grammar · Task 1', q: 'No one wants extra homework tonight, __________?', options: ['don\'t he', 'does he', 'is he', 'do they', 'don\'t they'], correct: 1 },
+    { section: 'Grammar · Task 1', q: 'You __________ enter without permission.', options: ['can\'t', 'aren\'t', 'ought to', 'weren\'t', 'don\'t'], correct: 0 },
+    { section: 'Grammar · Task 1', q: 'Jessica stopped __________ to the gym after she had got back into shape.', options: ['go', 'to go', 'going', 'gone', 'goes'], correct: 2 },
+    { section: 'Grammar · Task 1', q: 'My mother\'s an interior designer __________ me.', options: ['as', 'the same', 'similar', 'like', 'to'], correct: 3 },
+    { section: 'Grammar · Task 1', q: 'The woman has a __________ jacket.', options: ['funny old short leather', 'funny short old leather', 'funny leather short old', 'short funny old leather', 'leather funny old short'], correct: 0 },
+    { section: 'Grammar · Task 2', q: 'If he __________ a chance of success, he __________ to move to London.', options: ['had / would have need', 'will have / would need', 'will have / will need', 'were to have / will need', 'were to have / would need'], correct: 4 },
+    { section: 'Grammar · Task 2', q: 'She had two choices, neither of __________ was affordable.', options: ['who', 'whom', 'that', 'which', 'where'], correct: 3 },
+    { section: 'Grammar · Task 2', q: 'Mother asked, "Where have you been yesterday?" → Mother asked __________.', options: ['me where I had been the day before', 'where I had been yesterday', 'me where I was the day before', 'where I could be the day before', 'me where had I been the previous day'], correct: 0 },
+    { section: 'Grammar · Task 2', q: 'I didn\'t apply for the job __________ that I had the necessary qualifications.', options: ['so', 'because of', 'despite the fact', 'in case', 'despite'], correct: 2 },
+    { section: 'Grammar · Task 2', q: 'Did I tell you about Paul and Karen? __________.', options: ['They stole their bags', 'They had their bags stolen', 'They get stolen their bags', 'They have their bags stolen', 'Their bags are stolen'], correct: 1 },
+    { section: 'Grammar · Task 2', q: 'By the time we __________ to the meeting, they _________ the big decisions without us.', options: ['got / have already made', 'get / had already made', 'had got / had already made', 'got / had already made', 'got / already made'], correct: 3 },
+    { section: 'Grammar · Task 2', q: 'Once there was _____ wild dog that was very hungry. He ran here and there _____ the woods and meadow looking _____ a squirrel and a mouse _____ eat.', options: ['a, in, through, to', 'the, in, at, for', 'a, in, for, for', 'the, across, to, to', 'a, through, for, to'], correct: 4 },
+    { section: 'Grammar · Task 3 (conversation)', q: 'T: You went to Professor Lee\'s geography lecture yesterday, didn\'t you? / M: Yeah, but I didn\'t understand very much. / T: 14. __________. But don\'t worry, it\'s only the first one.', options: ['So am I', 'Yes, so do I', 'Neither did I', 'Yeah, I suppose so', 'No, me neither'], correct: 2 },
+    { section: 'Grammar · Task 3 (conversation)', q: 'M: 15. __________ . (replying to "don\'t worry about it, it\'s only the first one")', options: ['So am I', 'Yes, so do I', 'Neither did I', 'Yeah, I suppose so', 'No, me neither'], correct: 3 },
+    { section: 'Grammar · Task 3 (conversation)', q: 'M: Oh, it\'s just been crazy. I haven\'t stopped since I got here. / T: 16. __________ . And it\'s a huge campus - I keep getting lost!', options: ['So am I', 'Yes, so do I', 'Neither did I', 'Yeah, I suppose so', 'No, me neither'], correct: 0 },
+    { section: 'Grammar · Task 4', q: 'When did you buy your ticket? (transform using "since")', options: ['How long is it since you bought your ticket?', 'When is it since you bought your ticket?', 'How long since you bought your ticket?', 'How long ago did you buy ticket?', 'How long has it been since you bought your ticket?'], correct: 0 },
+    { section: 'Grammar · Task 4', q: 'He hasn\'t travelled abroad for years. (transform using "time")', options: ['The last time he travelled abroad was years ago.', 'He hasn\'t travelled abroad years ago.', 'He hasn\'t travelled abroad last time ago.', 'He has travelled for a long time.', 'First time he travelled abroad was long ago.'], correct: 0 },
+    { section: 'Vocabulary · Task 1', q: 'The rain won\'t last long; it\'s only a __________.', options: ['hail', 'breeze', 'shower', 'frost', 'downpour'], correct: 2 },
+    { section: 'Vocabulary · Task 1', q: '__________ is a person whose job is riding horses in races.', options: ['Fencer', 'Jockey', 'Runner', 'Swimmer', 'Golfer'], correct: 1 },
+    { section: 'Vocabulary · Task 1', q: 'The theory of __________ studies the nature and origin of the universe.', options: ['chemistry', 'physics', 'biology', 'cosmology', 'medicine'], correct: 3 },
+    { section: 'Vocabulary · Task 1', q: 'For security reasons, always log __________ when you leave your computer unattended.', options: ['up', 'in', 'on', 'for', 'out'], correct: 4 },
+    { section: 'Vocabulary · Task 2', q: 'A(n) __________ is a tall bird with long thin legs and a long neck.', options: ['crane(d)', 'ostrich', 'lever', 'move(d)', 'stretch(ed)'], correct: 0 },
+    { section: 'Vocabulary · Task 2', q: 'Finally, the house was put back onto the truck by __________.', options: ['crane(d)', 'ostrich', 'lever', 'move(d)', 'stretch(ed)'], correct: 0 },
+    { section: 'Vocabulary · Task 2', q: 'The boy __________ his neck to get the first glimpse of a celebrity.', options: ['crane(d)', 'ostrich', 'lever', 'move(d)', 'stretch(ed)'], correct: 0 },
+    { section: 'Vocabulary · Task 3', q: 'What will you take with you when you reach the mountain\'s peak?', options: ['hiking boots', 'climbing gear', 'a fencing sword', 'bowling pins', 'a mountain bike'], correct: 1 },
+    { section: 'Vocabulary · Task 3', q: 'What expression is used for making pain go away?', options: ['to complain of pain', 'to suffer pain', 'to cause pain', 'to soothe pain', 'to inflict pain'], correct: 3 },
+    { section: 'Vocabulary · Task 4', q: 'ageing substance / A(n) __ viral drug / __ depressant treatment — choose the prefix.', options: ['ante', 'pro', 'non', 'pre', 'anti'], correct: 4 },
+    { section: 'Vocabulary · Task 4', q: 'A persist(__________) learner — choose the suffix.', options: ['-ance', '-ant', '-ence', '-ent', '-ible'], correct: 3 },
+    { section: 'Vocabulary · Task 5', q: 'Tonya spends a lot of money __________ fancy clothes.', options: ['in', 'over', 'on', 'for', 'onto'], correct: 2 },
+    { section: 'Vocabulary · Task 5', q: 'I asked our neighbors to keep an eye __________ the house while we were away.', options: ['with', 'over', 'at', 'for', 'on'], correct: 4 },
+    { section: 'Vocabulary · Task 6 (idiom)', q: 'It really got Mr Robert\'s goat when he had to wait two hours to get his plane tickets.', options: ['He was annoyed at the long delay.', 'He was angry because he couldn\'t get the ticket.', 'He didn\'t care about the long line.', 'He was frustrated because he was late for the flight.', 'He didn\'t mind the long delay.'], correct: 0 },
+    { section: 'Vocabulary · Task 6 (idiom)', q: 'Who wears trousers in your family?', options: ['be a caregiver of the family', 'be financially dependent on the spouse', 'be the dominant partner in a marriage', 'be the most educated family member', 'be the only breadwinner of the family'], correct: 2 },
+    { section: 'Communication · Task 1', q: 'What\'s wrong with the woman\'s current apartment? (boiler keeps breaking, loses heat)', options: ['The owner is unpleasant.', 'It\'s too noisy.', 'It\'s not convenient to the university.', 'The heating system is defective.', 'She is pleased with her apartment.'], correct: 3 },
+    { section: 'Communication · Task 1', q: 'What must the woman do to have her deposit returned?', options: ['Alert the housing authorities.', 'Tell her owner two months in advance that she\'s moving.', 'Move to another apartment in the same building.', 'Leave by the end of the month.', 'Lose the heating at the end of the month.'], correct: 1 },
+    { section: 'Communication · Task 1', q: 'What does the woman require of her next apartment?', options: ['It must be in a new building.', 'It must be on a higher floor.', 'It must be within driving distance of the university.', 'It must have quiet surroundings.', 'The cost will be reasonable.'], correct: 3 },
+    { section: 'Communication · Task 2', q: 'Annie: This milk smells bad. / Philip: Yes, I think it\'s __________.', options: ['poured out', 'thawed out', 'went off', 'heated up', 'gone off'], correct: 4 },
+    { section: 'Communication · Task 2', q: 'A: I always seem to pick boyfriends who __________ me __________. What can I do?', options: ['let, down', 'finish, with', 'make, up', 'live, down', 'liven, up'], correct: 0 },
+    { section: 'Reading · The Wrong Guy', q: 'What is the article about?', options: ['It explains the difficulties in learning English.', 'It criticizes the BBC for its unprofessionalism.', 'It describes a humorous mix-up at the BBC.', 'It discusses the job interview process at the BBC.', 'It highlights the importance of clear communication.'], correct: 2 },
+    { section: 'Reading · The Wrong Guy', q: 'What was the purpose of Mr Goma going to the BBC TV center?', options: ['He wanted to meet an IT expert.', 'Someone had phoned for a taxi.', 'He was to be interviewed on TV.', 'He wanted a job.', 'He watched a TV interview.'], correct: 3 },
+    { section: 'Reading · The Wrong Guy', q: 'What does the article suggest about Mr Goma\'s decision to follow the producer?', options: ['He thought he was being hired immediately.', 'He was excited about being on TV.', 'He was intentionally trying to deceive the BBC staff.', 'He was curious about the TV studio.', 'He thought his name was mispronounced.'], correct: 4 },
+    { section: 'Reading · The Wrong Guy', q: 'What does the article mention about Mr Goma\'s behavior during the TV interview?', options: ['He took it easy and attempted to answer the questions.', 'He refused to answer any questions.', 'He panicked and ran out of the studio.', 'He immediately corrected the producer\'s mistake.', 'He asked for assistance from the BBC staff.'], correct: 0 },
+    { section: 'Reading · The Wrong Guy', q: 'What is the primary comparison made in the article?', options: ['Mr Goma\'s English skills vs native speakers.', 'Traditional job interviews vs TV appearances.', 'Mr Goma and Guy Kewney\'s professional backgrounds.', 'Mr Goma\'s vs viewers\' reactions to the interview.', 'BBC\'s interview process vs other media outlets.'], correct: 2 },
+    { section: 'Reading · The Wrong Guy', q: 'What is implied about the BBC staff\'s reaction to the mix-up?', options: ['They were completely unaware until viewers pointed it out.', 'They realized the mistake only after he had answered several questions.', 'They knew about the mix-up but continued the interview.', 'They stopped the interview as soon as they noticed the mistake.', 'They thought Mr Goma was playing a prank.'], correct: 1 },
+    { section: 'Reading · Task 2 (summary gaps)', q: '__________ the producer said the wrong name, Guy still went with her to answer the questions.', options: ['whereas', 'as', 'since', 'even though', 'apart from'], correct: 3 },
+    { section: 'Reading · Task 2 (summary gaps)', q: 'Guy Kewney is an IT expert, __________ Guy Goma is an IT assistant.', options: ['whereas', 'as', 'since', 'even though', 'apart from'], correct: 0 },
+    { section: 'Reading · Task 2 (summary gaps)', q: '__________ looking a bit shocked, Goma gave no other sign that something was wrong.', options: ['whereas', 'as', 'since', 'even though', 'apart from'], correct: 4 },
+    { section: 'Part 2 · Word forms (calendars)', q: '__________ types of calendars can be based on the Sun or the Moon.', options: ['Common', 'Commonly', 'Commonality', 'Commons', 'Commoner'], correct: 0 },
+    { section: 'Part 2 · Word forms (calendars)', q: 'solar calendars consist of __________ years of 365 days...', options: ['regularly', 'regular', 'regulate', 'regularity', 'regularization'], correct: 1 },
+    { section: 'Part 2 · Word forms (calendars)', q: '...an extra day every fourth year to make up for the __________ fractional amount.', options: ['addition', 'add', 'additional', 'added', 'additionally'], correct: 2 },
+    { section: 'Part 2 · Word forms (calendars)', q: 'The lunar calendar is __________ to the lunar month rather than the solar year.', options: ['synchronization', 'synchronizing', 'synchronicity', 'synchronize', 'synchronized'], correct: 4 },
+    { section: 'Part 2 · Word forms (calendars)', q: 'most lunar calendars have __________ months of 29 and 30 days.', options: ['alternate', 'alternating', 'alternative', 'alternately', 'alternatively'], correct: 1 },
+    { section: 'Part 2 · Word forms (calendars)', q: 'A twelve-month lunar year has 354 days, 11 days __________ than a solar year.', options: ['shorter', 'short', 'the shortest', 'shortage', 'shortest'], correct: 0 },
+    { section: 'Part 2 · Matching', q: 'to wane — choose the matching definition.', options: ['connected with the sun', 'connected with the moon', 'more than usual', 'extremely small', 'to become gradually smaller, weaker or less important', 'to take the place of something lost', 'to seem to get gradually bigger', 'to be formed from things or people', 'to be connected with stars', 'one year in every four'], correct: 4 },
+    { section: 'Part 2 · Matching', q: 'to consist of — choose the matching definition.', options: ['connected with the sun', 'connected with the moon', 'more than usual', 'extremely small', 'to become gradually smaller, weaker or less important', 'to take the place of something lost', 'to seem to get gradually bigger', 'to be formed from things or people', 'to be connected with stars', 'one year in every four'], correct: 7 },
+    { section: 'Part 2 · Matching', q: 'extra — choose the matching definition.', options: ['connected with the sun', 'connected with the moon', 'more than usual', 'extremely small', 'to become gradually smaller, weaker or less important', 'to take the place of something lost', 'to seem to get gradually bigger', 'to be formed from things or people', 'to be connected with stars', 'one year in every four'], correct: 2 },
+    { section: 'Part 2 · Matching', q: 'to wax — choose the matching definition.', options: ['connected with the sun', 'connected with the moon', 'more than usual', 'extremely small', 'to become gradually smaller, weaker or less important', 'to take the place of something lost', 'to seem to get gradually bigger until its full form can be seen', 'to be formed from things or people', 'to be connected with stars', 'one year in every four'], correct: 6 },
+    { section: 'Part 2 · Matching', q: 'to make up for — choose the matching definition.', options: ['connected with the sun', 'connected with the moon', 'more than usual', 'extremely small', 'to become gradually smaller, weaker or less important', 'to take the place of something lost', 'to seem to get gradually bigger', 'to be formed from things or people', 'to be connected with stars', 'one year in every four'], correct: 5 },
+    { section: 'Part 2 · Matching', q: 'fractional — choose the matching definition.', options: ['connected with the sun', 'connected with the moon', 'more than usual', 'extremely small', 'to become gradually smaller, weaker or less important', 'to take the place of something lost', 'to seem to get gradually bigger', 'to be formed from things or people', 'to be connected with stars', 'one year in every four'], correct: 3 },
+    { section: 'Part 2 · Matching', q: 'lunar — choose the matching definition.', options: ['connected with the sun', 'connected with the moon', 'more than usual', 'extremely small', 'to become gradually smaller, weaker or less important', 'to take the place of something lost', 'to seem to get gradually bigger', 'to be formed from things or people', 'to be connected with stars', 'one year in every four'], correct: 1 },
+    { section: 'Part 2 · Matching', q: 'solar — choose the matching definition.', options: ['connected with the sun', 'connected with the moon', 'more than usual', 'extremely small', 'to become gradually smaller, weaker or less important', 'to take the place of something lost', 'to seem to get gradually bigger', 'to be formed from things or people', 'to be connected with stars', 'one year in every four'], correct: 0 },
+    { section: 'Part 2 · Synonyms', q: 'Passerines are the dominant avian group. (synonym of "dominant")', options: ['elementary', 'principal', 'minor', 'slight', 'fundamental'], correct: 1 },
+    { section: 'Part 2 · Synonyms', q: '...regarded as the most highly evolved of all birds. (synonym of "evolved")', options: ['developed', 'evoked', 'boomed', 'bloomed', 'involved'], correct: 0 },
+    { section: 'Part 2 · Synonyms', q: '...occur in abundance. (synonym of "abundance")', options: ['broadness', 'enough', 'plenty', 'increase', 'accumulation'], correct: 2 },
+    { section: 'Part 2 · Synonyms', q: '...an almost infinite variety of colors. (synonym of "infinite")', options: ['numerable', 'measurable', 'endless', 'wide', 'short-lived'], correct: 2 },
+    { section: 'Part 2 · Synonyms', q: '...behavioral traits. (synonym of "traits")', options: ['tracks', 'trace', 'appearance', 'trail', 'features'], correct: 4 },
+    { section: 'Part 2 · Synonyms', q: 'Many passerines are considered quite agile. (synonym of "agile")', options: ['swift', 'clumsy', 'graceful', 'restless', 'chaotic'], correct: 2 }
+  ]
+};
+
+const EXAM_2025 = {
+  key: 'ees2025a',
+  title: 'ЭЕШ 2025 — Хувилбар А',
+  subtitle: 'Англи хэл · Нэгдүгээр ба Хоёрдугаар хэсэг',
+  questions: [
+    { section: 'Grammar · Task 1', q: '___ is becoming increasingly popular among young people lately.', options: ['Vegetable', 'Vegetarianism', 'Vegetarian', 'Vegetate', 'Vegetation'], correct: 1 },
+    { section: 'Grammar · Task 1', q: 'Unfortunately, she had _________ friends for help.', options: ['little', 'a few', 'few', 'a little', 'much'], correct: 2 },
+    { section: 'Grammar · Task 1', q: 'They ________ leave at 11 o\'clock last night because the last bus went at 11.20.', options: ['don\'t have to', 'must', 'have to', 'had to', 'need'], correct: 3 },
+    { section: 'Grammar · Task 1', q: 'This is the bank _________ was robbed yesterday.', options: ['whom', 'who', 'whose', 'where', 'which'], correct: 4 },
+    { section: 'Grammar · Task 1', q: 'Would you mind not __________ the radio until I\'ve finished with this phone call?', options: ['to turn on', 'turning on', 'to be turning on', 'turn on', 'to be turned on'], correct: 1 },
+    { section: 'Grammar · Task 1', q: 'I occasionally go to the gym but I should go ________ than I do.', options: ['the most frequent', 'frequent', 'more frequently', 'more frequent', 'frequently'], correct: 2 },
+    { section: 'Grammar · Task 1', q: 'My boss complained __________ my arriving late last week.', options: ['for', 'of', 'on', 'in', 'about'], correct: 4 },
+    { section: 'Grammar · Task 1', q: 'Draughts _____ not a complicated game.', options: ['have', 'are', 'were', 'is', 'has'], correct: 3 },
+    { section: 'Grammar · Task 1', q: 'The older he gets, ______ he becomes.', options: ['the wiser', 'more wiser', 'the wisest', 'wiser', 'wisest'], correct: 0 },
+    { section: 'Grammar · Task 2', q: 'If the questions _______ too difficult, we _______ them.', options: ['are/would answer', 'hadn\'t been / would have answered', 'haven\'t been / will be answered', 'have/would have answered', 'hadn\'t been / wouldn\'t have answered'], correct: 1 },
+    { section: 'Grammar · Task 2', q: 'Everyone thought she would accept a new job ________ it was difficult.', options: ['in spite of', 'despite', 'even though', 'moreover', 'however'], correct: 2 },
+    { section: 'Grammar · Task 2', q: 'The students\' problems _____________ by the survey.', options: ['will have revealed', 'have revealed', 'are have revealed', 'haven\'t been revealed', 'hasn\'t been revealed'], correct: 3 },
+    { section: 'Grammar · Task 2', q: 'Jennifer said, "I\'m going to work in the space exploration next year."', options: ['Jennifer said she was going to work in the space exploration the following year.', 'Jennifer said I was going to work in the space exploration the following year.', 'Jennifer said she was going to work in the space exploration a year later.', 'Jennifer said I was going to work in the space exploration next year.', 'Jennifer said she is going to work in the space exploration the following year.'], correct: 0 },
+    { section: 'Grammar · Task 3 (error ID)', q: 'Five-credits-hour courses are approved for the student\'s work in the major field of interest. (which underlined part is wrong?)', options: ['five-credits-hour', 'are approved', 'student\'s', 'the major', 'of interest'], correct: 0 },
+    { section: 'Grammar · Task 3 (error ID)', q: 'Until the 1400s, most books and texts were producing by scribes who copied them by hand. (which underlined part is wrong?)', options: ['most books', 'producing', 'by scribes', 'copied', 'by hand'], correct: 1 },
+    { section: 'Grammar · Task 3 (error ID)', q: 'Some individuals see the issue of smoking as a matter of personal freedom or choices. (which underlined part is wrong?)', options: ['individuals', 'smoking', 'a matter', 'freedom', 'choices'], correct: 4 },
+    { section: 'Vocabulary · Task 1', q: 'Which item is made from cotton?', options: ['a raincoat', 'a shirt', 'a wristband', 'nylons', 'a jumper'], correct: 1 },
+    { section: 'Vocabulary · Task 1', q: 'A young horse is called? A ________.', options: ['fawn', 'kid', 'cub', 'lamb', 'foal'], correct: 4 },
+    { section: 'Vocabulary · Task 1', q: 'A _______ is a part of the building where a vehicle is kept.', options: ['garage', 'patio', 'garden', 'shade', 'concrete'], correct: 0 },
+    { section: 'Vocabulary · Task 1', q: 'Name the means of transport the front part of which is a cockpit.', options: ['coach', 'aircraft', 'caravan', 'train', 'ferry'], correct: 1 },
+    { section: 'Vocabulary · Task 1', q: 'A _______ uses a computer or smartphone to commit crimes.', options: ['kidnapper', 'fraudster', 'vandal', 'mugger', 'cybercriminal'], correct: 4 },
+    { section: 'Vocabulary · Task 1', q: 'As soon as Lydia and I met, we knew we were going to get ________ well.', options: ['up', '(a) round', 'at', 'on', 'in'], correct: 3 },
+    { section: 'Vocabulary · Task 1', q: 'It was sunny and hot.', options: ['There was a bit of drizzle.', 'There were a few sunny showers.', 'It was very overcast.', 'There was quite a breeze.', 'We had a bit of heat wave.'], correct: 4 },
+    { section: 'Vocabulary · Task 1', q: 'It\'s so easy to get around. Public transport is excellent – it\'s cheap and __________.', options: ['useful', 'efficient', 'cosmopolitan', 'stressful', 'crowded'], correct: 1 },
+    { section: 'Vocabulary · Task 1', q: 'They won two nil.', options: ['year somebody was born', 'the temperature', 'a telephone number', 'the score in a tennis match', 'the result of the football match'], correct: 4 },
+    { section: 'Vocabulary · Task 2 (story)', q: 'A few months ago Ron was arrested by the police, who (26) __________ him of being involved in a robbery.', options: ['suspected', 'heard', 'questioned', 'charged', 'convicted'], correct: 0 },
+    { section: 'Vocabulary · Task 2 (story)', q: 'He had been (27) __________ previously of petty crime, but never anything serious.', options: ['suspected', 'heard', 'questioned', 'charged', 'convicted'], correct: 4 },
+    { section: 'Vocabulary · Task 2 (story)', q: 'The police (28) __________ him for several hours...', options: ['suspected', 'heard', 'questioned', 'charged', 'convicted'], correct: 2 },
+    { section: 'Vocabulary · Task 2 (story)', q: '...and finally (29) __________ him with robbery.', options: ['suspected', 'heard', 'questioned', 'charged', 'convicted'], correct: 3 },
+    { section: 'Vocabulary · Task 2 (story)', q: 'A few weeks later he had to appear in court when his case would be (30) __________.', options: ['suspected', 'heard', 'questioned', 'charged', 'convicted'], correct: 1 },
+    { section: 'Vocabulary · Task 3', q: 'In which sentence does "to take off" mean "to remove something from a surface"?', options: ['Take off your shoes. You\'re getting mud on the carpet.', 'You need to take the old wax off the floor before you wax it again.', 'Our plane took off an hour late because of the snow.', 'If this business takes off, we could make a lot of money.', 'Alfonso always takes the skin off chicken before he cooks it.'], correct: 1 },
+    { section: 'Vocabulary · Task 3', q: 'I think he has the flu because you don\'t usually throw __________ when you have a cold.', options: ['back', 'out', 'on', 'off', 'up'], correct: 4 },
+    { section: 'Vocabulary · Task 3', q: 'I\'m sorry to cancel, but I just don\'t _________ up to going dancing today.', options: ['look', 'feel', 'take', 'get', 'bring'], correct: 1 },
+    { section: 'Communication · Task 1', q: 'Man: What seems to be the problem, ma\'am? / Woman: This sink is clogged up and the faucet is dripping. → What kind of work does the man probably do?', options: ['He\'s a driver.', 'He\'s a mechanic.', 'He\'s an engineer.', 'He\'s a plumber.', 'He\'s an electrician.'], correct: 3 },
+    { section: 'Communication · Task 1', q: 'Woman: Where can I find the course books for Spanish 101? / Man: They\'re in aisle 3, under languages. → Where is this conversation taking place?', options: ['In a supermarket.', 'In a bookstore.', 'In a library.', 'At a travel agency.', 'In a hospital.'], correct: 1 },
+    { section: 'Communication · Task 1', q: 'Man: Did I miss anything while I was buying hot dogs and sodas? / Woman: Yes, our team scored a touchdown! → Where is this conversation taking place?', options: ['At a restaurant', 'At a shopping center.', 'At a café.', 'At the circus.', 'At a stadium.'], correct: 4 },
+    { section: 'Communication · Task 2', q: 'Woman: Do you get pay raises where you work? / Man: Yes, but they are few and far between. → What does the man mean?', options: ['He has to go far to get a raise.', 'He gets lots of raises at his job.', 'There are no raises given where he works.', 'They don\'t give raises very often where he works.', 'He has already got pay raises.'], correct: 3 },
+    { section: 'Communication · Task 2', q: 'Woman: I should tell them they need more decorations. / Man: They never listen to anyone, so save your breath. → What does the man want the woman to do?', options: ['Hold her breath', 'Not say anything.', 'Make some suggestions.', 'Propose an idea.', 'Listen to the others.'], correct: 1 },
+    { section: 'Reading · Narcolepsy', q: 'What is the main topic of this passage?', options: ['Development of narcolepsy', 'Reliable cure for narcolepsy', 'Aspects of narcolepsy', 'Causes of narcolepsy', 'Treatment of narcolepsy'], correct: 2 },
+    { section: 'Reading · Narcolepsy', q: 'Narcolepsy is a condition in which people...', options: ['have unusual brain chemistry', 'doze after eating a meal', 'doze at unusual times', 'only sleep in the day', 'feel drowsy during the lunch break'], correct: 2 },
+    { section: 'Reading · Narcolepsy', q: 'A person is most likely to be narcoleptic if he or she falls asleep while...', options: ['taking a long car trip', 'reading a book', 'watching a movie', 'lying on the beach', 'eating at a restaurant'], correct: 0 },
+    { section: 'Reading · Narcolepsy', q: 'The passage implies that narcolepsy...', options: ['can be a serious disorder', 'is an imaginary problem', 'is a rare case', 'is easily cured', 'is really laziness'], correct: 0 },
+    { section: 'Reading · Narcolepsy', q: 'The word "alert" in line 7 is closest in meaning to...', options: ['alarmed', 'tired', 'drowsy', 'informed', 'awake'], correct: 4 },
+    { section: 'Reading · Narcolepsy', q: 'According to the passage, it can be said that...', options: ['the number of narcoleptics is unknown', 'most people are narcoleptics sometimes', 'narcoleptics are drug addicts', 'narcolepsy is a very rare condition', 'narcolepsy can easily be cured'], correct: 0 },
+    { section: 'Reading · Task 2 (sweating)', q: 'Studies of Nigerians found no more sweat glands than British men, but when they start physical work (45) __________.', options: ['so as to help evaporation', 'for salt concentrations in sweat to decrease', 'they start sweating more quickly', 'to aid the loss of salt'], correct: 2 },
+    { section: 'Reading · Task 2 (sweating)', q: 'Acclimatization to heat encourages a tendency (46) __________. Nigerians lose less salt through sweating.', options: ['so as to help evaporation', 'for salt concentrations in sweat to decrease', 'they start sweating more quickly', 'to aid the loss of salt'], correct: 1 },
+    { section: 'Reading · Task 3', q: 'Owners of valuable paintings commission copies to exhibit at home. What is the most likely reason?', options: ['Because they attract more potential buyers', 'Because they need to trick the experts', 'Because they want to encourage talented artists', 'Because they enjoy buying fake paintings', 'Because they hope to foil would-be thieves'], correct: 4 },
+    { section: 'Part 2 · Word forms (calendars)', q: 'The earliest complete calendars were probably based on lunar (a) __________.', options: ['observation', 'observe', 'observations', 'to observe', 'observatory'], correct: 0 },
+    { section: 'Part 2 · Word forms (calendars)', q: 'But lunar years were not (b) __________ for agricultural purposes.', options: ['convenient', 'inconvenient', 'convenience', 'inconvenience', 'conveniently'], correct: 0 },
+    { section: 'Part 2 · Word forms (calendars)', q: '...lunar-solar calendars were formed by adding (c) an ___________ "leap" month...', options: ['additionally', 'addition', 'added', 'adding', 'additional'], correct: 4 },
+    { section: 'Part 2 · Word forms (calendars)', q: 'The Gregorian civil calendar is calculated without (d) __________ to the moon.', options: ['refer', 'reference', 'refers', 'referring', 'referred'], correct: 1 },
+    { section: 'Part 2 · Word forms (calendars)', q: '...became the most popular and (e) ________ method...', options: ['impractical', 'practical', 'practice', 'practicality', 'Practically'], correct: 1 },
+    { section: 'Part 2 · Word forms (calendars)', q: '...popular and practical method of (f) __________ years.', options: ['measurable', 'measured', 'measures', 'measuring', 'measurement'], correct: 3 },
+    { section: 'Part 2 · Synonyms/Antonyms', q: 'The space shuttle covered vast distances. (synonym of "vast")', options: ['huge', 'varying', 'hard', 'very', 'long'], correct: 0 },
+    { section: 'Part 2 · Synonyms/Antonyms', q: 'Occasionally, the most unlikely people manage to collaborate successfully. (synonym of "collaborate")', options: ['stay together', 'put together', 'stand together', 'get together', 'work together'], correct: 4 },
+    { section: 'Part 2 · Synonyms/Antonyms', q: 'She plans to participate in the marathon. (synonym of "participate")', options: ['take part in', 'complete', 'register', 'tussle', 'delay'], correct: 0 },
+    { section: 'Part 2 · Synonyms/Antonyms', q: 'A child\'s family experiences are crucial for personality development. (synonym of "crucial")', options: ['obvious', 'evident', 'extensive', 'critical', 'wise'], correct: 3 },
+    { section: 'Part 2 · Synonyms/Antonyms', q: 'She had a cozy little apartment in Boston. (antonym of "cozy")', options: ['tidy', 'dirty', 'warm', 'convenient', 'uncomfortable'], correct: 4 },
+    { section: 'Part 2 · Synonyms/Antonyms', q: 'The renowned conductor made a guest appearance. (antonym of "renowned")', options: ['well-known', 'famous', 'unknown', 'ordinary', 'mundane'], correct: 2 },
+    { section: 'Part 2 · Synonyms/Antonyms', q: 'The police concealed the vital evidence. (antonym of "concealed")', options: ['hide', 'revealed', 'display', 'released', 'hidden'], correct: 1 },
+    { section: 'Part 2 · Synonyms/Antonyms', q: 'I\'m always sea-sick if the sea is rough. (antonym of "rough")', options: ['dangerous', 'stormy', 'calm', 'violent', 'hard'], correct: 2 },
+    { section: 'Part 2 · Floods text', q: 'Flooding returned after the equivalent of a month\'s (a) ______ fell in 48 hours.', options: ['stranded', 'affected', 'impassable', 'warnings', 'rescued', 'rainfall'], correct: 5 },
+    { section: 'Part 2 · Floods text', q: 'In one of the most (b) _______ areas, soldiers helped evacuate homes.', options: ['stranded', 'affected', 'impassable', 'warnings', 'rescued', 'rainfall'], correct: 1 },
+    { section: 'Part 2 · Floods text', q: 'Thirty children had to be (c) ________ from a school bus.', options: ['stranded', 'affected', 'impassable', 'warnings', 'rescued', 'rainfall'], correct: 4 },
+    { section: 'Part 2 · Floods text', q: '...after they were (d) ________ in flood water near Bristol.', options: ['stranded', 'affected', 'impassable', 'warnings', 'rescued', 'rainfall'], correct: 0 },
+    { section: 'Part 2 · Floods text', q: 'Many roads in the country are (e) ________.', options: ['stranded', 'affected', 'impassable', 'warnings', 'rescued', 'rainfall'], correct: 2 },
+    { section: 'Part 2 · Floods text', q: 'Weather forecasters have also issued 25 flood (f) _______.', options: ['stranded', 'affected', 'impassable', 'warnings', 'rescued', 'rainfall'], correct: 3 }
+  ]
+};
+
+const PAST_EXAMS = [EXAM_2024, EXAM_2025];
+let pastExamState = { examKey: null, currentQ: 0, answers: [], selected: null };
+
+function renderPastExamGrid() {
+  const grid = document.getElementById('pastExamGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  PAST_EXAMS.forEach(exam => {
+    const best = state.pastExamBest[exam.key];
+    const card = document.createElement('div');
+    card.className = 'topic-card bg-slate-800/50 border border-slate-700 rounded-xl p-5 cursor-pointer';
+    card.onclick = () => openPastExam(exam.key);
+    card.innerHTML = `
+      <div class="flex items-start justify-between mb-3">
+        <span class="mono text-xs text-blue-400 bg-blue-950 border border-blue-800 rounded px-2 py-0.5">${exam.questions.length} асуулт</span>
+        ${best !== undefined ? `<span class="text-[10px] bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full">Шилдэг: ${best}%</span>` : '<span class="text-[10px] bg-slate-700/50 text-slate-400 px-2 py-0.5 rounded-full">Оролдоогүй</span>'}
+      </div>
+      <h4 class="font-semibold text-slate-100 text-sm mb-1">${exam.title}</h4>
+      <p class="text-xs text-slate-400">${exam.subtitle}</p>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function openPastExam(examKey) {
+  const exam = PAST_EXAMS.find(e => e.key === examKey);
+  pastExamState = { examKey, currentQ: 0, answers: [], selected: null };
+  document.getElementById('pastExamListView').classList.add('hidden');
+  document.getElementById('pastExamDetailView').classList.remove('hidden');
+  renderPastExamQuestion();
+}
+
+function closePastExamDetail() {
+  document.getElementById('pastExamListView').classList.remove('hidden');
+  document.getElementById('pastExamDetailView').classList.add('hidden');
+  renderPastExamGrid();
+}
+
+function renderPastExamQuestion() {
+  const exam = PAST_EXAMS.find(e => e.key === pastExamState.examKey);
+  const content = document.getElementById('pastExamDetailContent');
+  const q = exam.questions[pastExamState.currentQ];
+  const progressPct = (pastExamState.currentQ / exam.questions.length) * 100;
+
+  content.innerHTML = `
+    <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+      <h3 class="display text-lg font-bold text-white">${exam.title}</h3>
+      <span class="text-xs text-slate-400">Асуулт ${pastExamState.currentQ + 1} / ${exam.questions.length}</span>
+    </div>
+    <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden mb-6">
+      <div class="h-full bg-blue-500 rounded-full xp-fill" style="width:${progressPct}%"></div>
+    </div>
+    <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 fade-panel">
+      <span class="text-[10px] bg-blue-950 border border-blue-800 text-blue-400 rounded-full px-2 py-0.5">${q.section}</span>
+      <p class="text-base font-medium text-slate-100 mt-3 mb-5">${q.q}</p>
+      <div id="pastExamOptions" class="flex flex-col gap-2 mb-6">
+        ${q.options.map((opt, i) => `
+          <div class="quiz-option border border-slate-700 rounded-lg px-4 py-3 text-sm text-slate-200" data-i="${i}" onclick="choosePastExamOption(${i})">${opt}</div>
+        `).join('')}
+      </div>
+      <div class="flex justify-end">
+        <button id="pastExamNextBtn" disabled class="bg-blue-600 disabled:bg-slate-700 disabled:text-slate-500 hover:bg-blue-500 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition">
+          ${pastExamState.currentQ === exam.questions.length - 1 ? 'Дуусгах' : 'Дараах асуулт →'}
+        </button>
+      </div>
+    </div>
+  `;
+  document.getElementById('pastExamNextBtn').addEventListener('click', nextPastExamQuestion);
+}
+
+function choosePastExamOption(i) {
+  pastExamState.selected = i;
+  document.querySelectorAll('#pastExamOptions .quiz-option').forEach(el => el.classList.remove('border-blue-500', 'bg-blue-950/40'));
+  document.querySelector(`#pastExamOptions .quiz-option[data-i="${i}"]`).classList.add('border-blue-500', 'bg-blue-950/40');
+  document.getElementById('pastExamNextBtn').disabled = false;
+}
+
+function nextPastExamQuestion() {
+  const exam = PAST_EXAMS.find(e => e.key === pastExamState.examKey);
+  pastExamState.answers.push(pastExamState.selected);
+  pastExamState.selected = null;
+  if (pastExamState.currentQ < exam.questions.length - 1) {
+    pastExamState.currentQ++;
+    renderPastExamQuestion();
+  } else {
+    finishPastExam();
+  }
+}
+
+function finishPastExam() {
+  const exam = PAST_EXAMS.find(e => e.key === pastExamState.examKey);
+  let correctCount = 0;
+  let rows = '';
+  exam.questions.forEach((q, i) => {
+    const chosen = pastExamState.answers[i];
+    const isCorrect = chosen === q.correct;
+    trackAnswer(isCorrect);
+    if (isCorrect) correctCount++;
+    else addMistake(exam.title, q.q, q.options, q.correct, chosen === undefined ? -1 : chosen);
+    rows += `
+      <div class="flex items-start gap-3 py-3 border-b border-slate-700 last:border-0">
+        <span class="text-lg">${isCorrect ? '✅' : '❌'}</span>
+        <div class="flex-1">
+          <p class="text-sm text-slate-200">${q.q}</p>
+          <p class="text-xs text-slate-400 mt-1">Зөв хариулт: <span class="text-emerald-400">${q.options[q.correct]}</span></p>
+        </div>
+      </div>
+    `;
+  });
+  const scorePercent = Math.round((correctCount / exam.questions.length) * 100);
+  const prevBest = state.pastExamBest[exam.key] || 0;
+  if (scorePercent > prevBest) state.pastExamBest[exam.key] = scorePercent;
+  state.testsCompleted += 1;
+  saveState();
+  addXp(30);
+  renderHeaderStats();
+
+  document.getElementById('pastExamDetailContent').innerHTML = `
+    <h3 class="display text-xl font-bold text-white mb-4">${exam.title} — Дүн</h3>
+    <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-8">
+      <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+        <div>
+          <p class="text-slate-400 text-sm">Таны оноо</p>
+          <p class="display text-4xl font-bold text-blue-400">${correctCount}/${exam.questions.length} <span class="text-lg text-slate-400 font-normal">(${scorePercent}%)</span></p>
+        </div>
+        <button onclick="openPastExam('${exam.key}')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-sm px-4 py-2.5 rounded-lg">🔁 Дахин эхлүүлэх</button>
+      </div>
+      <div>${rows}</div>
+    </div>
+  `;
+}
+
+/* =========================================================================
+   100 CORE ЭЕШ VOCABULARY WORDS
+   ========================================================================= */
+const VOCAB_100 = [
+  ['abundance','элбэг дэлбэг байдал'],['accomplish','биелүүлэх, гүйцэтгэх'],['acquire','олж авах'],
+  ['adapt','дасан зохицох'],['advantage','давуу тал'],['affect','нөлөөлөх'],['analyze','шинжлэх'],
+  ['anticipate','урьдчилан таамаглах'],['approach','арга барил, ойртох'],['appropriate','тохиромжтой'],
+  ['assume','таамаглах, үзэх'],['attitude','хандлага'],['available','боломжтой, бэлэн байгаа'],
+  ['aware','мэдэж байгаа, ухамсартай'],['benefit','ашиг тус'],['challenge','сорилт'],
+  ['circumstance','нөхцөл байдал'],['collaborate','хамтран ажиллах'],['commit','амлах, зориулах'],
+  ['communicate','харилцах'],['compensate','нөхөн олгох'],['complex','нарийн төвөгтэй'],
+  ['comprehensive','иж бүрэн'],['conclude','дүгнэх'],['conduct','явуулах, авирлах'],
+  ['consequence','үр дагавар'],['considerable','ихээхэн, анхаарал татахуйц'],['consist','бүрдэх'],
+  ['constant','тогтмол'],['contribute','хувь нэмэр оруулах'],['convince','итгүүлэх'],
+  ['crucial','маш чухал'],['data','мэдээлэл'],['decade','арван жил'],
+  ['demonstrate','харуулах, нотлох'],['despite','...гэсэн ч, үл харгалзан'],['determine','тодорхойлох'],
+  ['diverse','олон янз, төрөл бүрийн'],['dominant','давамгайлсан'],['efficient','үр ашигтай'],
+  ['emerge','гарч ирэх'],['emphasize','онцлон тэмдэглэх'],['enhance','сайжруулах'],
+  ['ensure','баталгаажуулах'],['establish','байгуулах, тогтоох'],['evaluate','үнэлэх'],
+  ['eventually','эцэст нь'],['evidence','нотолгоо'],['evolve','хувьсан өөрчлөгдөх'],
+  ['exceed','давах, хэтрэх'],['expand','өргөжих'],['expose','ил гаргах, өртөх'],
+  ['fluctuate','хэлбэлзэх'],['fundamental','үндсэн, суурь'],['generate','үүсгэх'],
+  ['identify','тодорхойлох, таних'],['illustrate','дүрслэх, жишээгээр харуулах'],['impact','нөлөө'],
+  ['implement','хэрэгжүүлэх'],['imply','илэрхийлэх, дам утга агуулах'],['inevitable','зайлшгүй'],
+  ['influence','нөлөө үзүүлэх'],['initial','анхны'],['innovative','шинэлэг'],
+  ['insight','гүн ойлголт'],['intend','зорих, санаархах'],['interpret','тайлбарлах'],
+  ['investigate','судлах'],['involve','оролцуулах, багтаах'],['maintain','хадгалах, дэмжих'],
+  ['manipulate','удирдан жолоодох'],['minimal','хамгийн бага'],['negotiate','хэлэлцээр хийх'],
+  ['obtain','олж авах'],['obvious','тодорхой, илэрхий'],['occur','тохиолдох'],
+  ['outcome','үр дүн'],['participate','оролцох'],['perceive','мэдрэх, ойлгох'],
+  ['persist','тууштай байх'],['perspective','үзэл бодол'],['phenomenon','үзэгдэл'],
+  ['potential','боломжит, чадавхи'],['precise','нарийн, тодорхой'],['predict','урьдчилан таамаглах'],
+  ['prior','өмнөх'],['prominent','нэр хүндтэй, гарамгай'],['proportion','харьцаа'],
+  ['reveal','илчлэх'],['reluctant','дурамжхан'],['reside','оршин суух'],
+  ['resource','нөөц'],['significant','ач холбогдолтой'],['sophisticated','нарийн боловсронгуй'],
+  ['strategy','стратеги'],['substantial','ихээхэн'],['sufficient','хангалттай'],
+  ['sustain','тэтгэх, дэмжих'],['tendency','хандлага'],['thorough','нарийвчилсан'],
+  ['ultimate','эцсийн'],['vary','ялгаатай байх, хувьсах'],['virtually','бараг л, бодит байдалд']
+];
+
+function renderVocab100(filter = '') {
+  const container = document.getElementById('vocab100List');
+  const progressEl = document.getElementById('vocab100Progress');
+  if (!container) return;
+  container.innerHTML = '';
+  const f = filter.trim().toLowerCase();
+  const filtered = VOCAB_100.filter(([w, mn]) => !f || w.toLowerCase().includes(f) || mn.includes(f));
+
+  filtered.forEach(([word, mn]) => {
+    const learned = !!state.vocabLearned[word];
+    const row = document.createElement('label');
+    row.className = 'flex items-center gap-3 px-4 py-2.5 rounded-lg border border-slate-700 bg-slate-800/40 hover:border-blue-700 transition cursor-pointer';
+    row.innerHTML = `
+      <input type="checkbox" ${learned ? 'checked' : ''} class="w-4 h-4 accent-emerald-500" data-word="${word}">
+      <span class="text-sm font-medium ${learned ? 'text-emerald-400' : 'text-slate-100'}">${word}</span>
+      <button type="button" class="speak-btn text-slate-400 hover:text-blue-400 text-sm shrink-0" data-speak="${word}" title="Дуудлага сонсох">🔊</button>
+      <span class="ml-auto text-xs text-slate-400">${mn}</span>
+    `;
+    container.appendChild(row);
+  });
+
+  container.querySelectorAll('.speak-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      speakWord(btn.dataset.speak);
+    });
+  });
+
+  container.querySelectorAll('input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', (e) => {
+      const word = e.target.dataset.word;
+      if (e.target.checked) state.vocabLearned[word] = true;
+      else delete state.vocabLearned[word];
+      saveState();
+      renderVocab100(document.getElementById('vocab100Search').value);
+    });
+  });
+
+  const learnedCount = Object.keys(state.vocabLearned).length;
+  progressEl.textContent = `${learnedCount}/${VOCAB_100.length} цээжилсэн`;
+}
+
+document.getElementById('vocab100Search').addEventListener('input', (e) => renderVocab100(e.target.value));
+
+/* =========================================================================
+   STUDY PLAN — calendar-based prep schedule
+   User picks a start date and an end/exam date, plus which weekdays are
+   rest days. Mongolia's 2026 public holidays are automatically skipped.
+   A rotating set of study focuses is assigned to each remaining day.
+   ========================================================================= */
+const MN_HOLIDAYS_2026 = [
+  ['2026-01-01', 'Шинэ жил'],
+  ['2026-02-17', 'Цагаан сарын амралт'],
+  ['2026-02-18', 'Цагаан сар (Шинийн 1)'],
+  ['2026-02-19', 'Цагаан сар (Шинийн 2)'],
+  ['2026-02-20', 'Цагаан сар (Шинийн 3)'],
+  ['2026-02-21', 'Цагаан сарын амралт'],
+  ['2026-02-22', 'Цагаан сарын амралт'],
+  ['2026-02-23', 'Цагаан сарын амралт'],
+  ['2026-03-08', 'Олон улсын эмэгтэйчүүдийн өдөр'],
+  ['2026-05-31', 'Бурхан багшийн их дүйчин өдөр'],
+  ['2026-06-01', 'Хүүхдийн баяр'],
+  ['2026-07-10', 'Үндэсний их баяр наадам'],
+  ['2026-07-11', 'Үндэсний их баяр наадам'],
+  ['2026-07-12', 'Үндэсний их баяр наадам'],
+  ['2026-07-13', 'Үндэсний их баяр наадам'],
+  ['2026-07-14', 'Үндэсний их баяр наадам'],
+  ['2026-07-15', 'Үндэсний их баяр наадам'],
+  ['2026-11-10', 'Чингис хааны мэндэлсэн өдөр'],
+  ['2026-11-26', 'Улс тунхагласны баяр'],
+  ['2026-12-29', 'Тусгаар тогтнолын өдөр']
+];
+const MN_HOLIDAY_MAP = Object.fromEntries(MN_HOLIDAYS_2026);
+
+const WEEKDAY_LABELS = ['Ням', 'Даваа', 'Мягмар', 'Лхагва', 'Пүрэв', 'Баасан', 'Бямба'];
+const STUDY_FOCUS_ROTATION = [
+  { icon: '📚', label: 'Grammar Hub' },
+  { icon: '🔤', label: 'Vocab (100 үг)' },
+  { icon: '❌', label: 'Mistake Log давтах' },
+  { icon: '⏱️', label: 'Simulator дасгал' }
+];
+
+let spSelectedRestDays = [0, 6]; // default: Sunday & Saturday off
+
+function initStudyPlanSetup() {
+  const restContainer = document.getElementById('spRestDays');
+  if (!restContainer) return;
+
+  const today = new Date();
+  const startInput = document.getElementById('spStartDate');
+  if (startInput && !startInput.value) startInput.value = todayStr();
+
+  restContainer.innerHTML = '';
+  WEEKDAY_LABELS.forEach((label, idx) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    const active = spSelectedRestDays.includes(idx);
+    btn.className = `text-xs px-3 py-1.5 rounded-lg border transition ${active ? 'bg-blue-600 border-blue-500 text-white' : 'bg-slate-900 border-slate-700 text-slate-300'}`;
+    btn.textContent = label;
+    btn.onclick = () => {
+      if (spSelectedRestDays.includes(idx)) spSelectedRestDays = spSelectedRestDays.filter(d => d !== idx);
+      else spSelectedRestDays.push(idx);
+      initStudyPlanSetup();
+    };
+    restContainer.appendChild(btn);
+  });
+}
+
+function generateStudyPlan() {
+  const startVal = document.getElementById('spStartDate').value;
+  const endVal = document.getElementById('spEndDate').value;
+  if (!startVal || !endVal) { showToast('Эхлэх болон дуусах огноогоо сонгоно уу', 'error'); return; }
+  const start = new Date(startVal + 'T00:00:00');
+  const end = new Date(endVal + 'T00:00:00');
+  if (end <= start) { showToast('Дуусах огноо эхлэх огнооноос хойш байх ёстой', 'error'); return; }
+
+  const days = [];
+  let focusIdx = 0;
+  const cursor = new Date(start);
+  while (cursor <= end) {
+    const iso = todayStrFromDate(cursor);
+    const weekday = cursor.getDay();
+    const isExamDay = iso === endVal;
+    const isHoliday = !!MN_HOLIDAY_MAP[iso];
+    const isRestDay = spSelectedRestDays.includes(weekday);
+
+    let entry;
+    if (isExamDay) {
+      entry = { date: iso, type: 'exam', label: 'Шалгалтын өдөр', icon: '🎓', done: false };
+    } else if (isHoliday) {
+      entry = { date: iso, type: 'holiday', label: MN_HOLIDAY_MAP[iso], icon: '🎌', done: false };
+    } else if (isRestDay) {
+      entry = { date: iso, type: 'rest', label: 'Амралт', icon: '💤', done: false };
+    } else {
+      const focus = STUDY_FOCUS_ROTATION[focusIdx % STUDY_FOCUS_ROTATION.length];
+      focusIdx++;
+      entry = { date: iso, type: 'study', label: focus.label, icon: focus.icon, done: false };
+    }
+    days.push(entry);
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  state.studyPlan = { startDate: startVal, endDate: endVal, restDays: [...spSelectedRestDays], days };
+  saveState();
+  renderStudyPlan();
+  showToast('Төлөвлөгөө үүслээ 🎉', 'success');
+}
+
+function todayStrFromDate(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+function toggleStudyDay(dateIso) {
+  const plan = state.studyPlan;
+  if (!plan) return;
+  const day = plan.days.find(d => d.date === dateIso);
+  if (!day || day.type === 'rest' || day.type === 'holiday') return;
+  const wasDone = day.done;
+  day.done = !day.done;
+  saveState();
+  if (day.done && !wasDone) addXp(8);
+  renderStudyPlan();
+}
+
+function resetStudyPlan() {
+  if (!confirm('Бэлтгэлийн төлөвлөгөөг устгах уу?')) return;
+  state.studyPlan = null;
+  saveState();
+  renderStudyPlan();
+}
+
+const STUDY_TYPE_STYLE = {
+  study:   'border-slate-700 bg-slate-800/40',
+  rest:    'border-slate-800 bg-slate-900/40 opacity-60',
+  holiday: 'border-amber-800/50 bg-amber-950/20',
+  exam:    'border-emerald-700/60 bg-emerald-950/30'
+};
+
+function renderStudyPlan() {
+  const setupEl = document.getElementById('studyPlanSetup');
+  const resultEl = document.getElementById('studyPlanResult');
+  if (!setupEl || !resultEl) return;
+
+  if (!state.studyPlan) {
+    setupEl.classList.remove('hidden');
+    resultEl.classList.add('hidden');
+    initStudyPlanSetup();
+    return;
+  }
+
+  setupEl.classList.add('hidden');
+  resultEl.classList.remove('hidden');
+
+  const plan = state.studyPlan;
+  const studyDays = plan.days.filter(d => d.type === 'study');
+  const doneCount = studyDays.filter(d => d.done).length;
+  const pct = studyDays.length ? Math.round((doneCount / studyDays.length) * 100) : 0;
+
+  document.getElementById('spProgressText').textContent = `${plan.startDate} → ${plan.endDate} · ${doneCount}/${studyDays.length} суралцах өдөр дууссан (${pct}%)`;
+  document.getElementById('spProgressBar').style.width = `${pct}%`;
+
+  // group by week (chunks of 7 starting from plan.startDate)
+  const container = document.getElementById('studyPlanDays');
+  container.innerHTML = '';
+  let weekChunk = [];
+  let weekNum = 1;
+
+  function flushWeek() {
+    if (weekChunk.length === 0) return;
+    const weekWrap = document.createElement('div');
+    weekWrap.innerHTML = `<p class="text-xs text-slate-500 uppercase tracking-wide mb-2">${weekNum} дэх долоо хоног</p>`;
+    const grid = document.createElement('div');
+    grid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2';
+    weekChunk.forEach(day => {
+      const card = document.createElement('div');
+      const clickable = day.type === 'study';
+      card.className = `border rounded-lg px-3 py-2.5 ${STUDY_TYPE_STYLE[day.type]} ${clickable ? 'cursor-pointer' : ''}`;
+      if (clickable) card.onclick = () => toggleStudyDay(day.date);
+      const dObj = new Date(day.date + 'T00:00:00');
+      const dateLabel = `${dObj.getMonth() + 1}/${dObj.getDate()} (${WEEKDAY_LABELS[dObj.getDay()]})`;
+      card.innerHTML = `
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-xs text-slate-400 mono">${dateLabel}</span>
+          ${day.type === 'study' ? `<span class="text-xs ${day.done ? 'text-emerald-400' : 'text-slate-500'}">${day.done ? '✓ Дууссан' : '○'}</span>` : ''}
+        </div>
+        <p class="text-sm mt-1 ${day.type === 'study' && day.done ? 'text-slate-500 line-through' : 'text-slate-200'}">${day.icon} ${day.label}</p>
+      `;
+      grid.appendChild(card);
+    });
+    weekWrap.appendChild(grid);
+    container.appendChild(weekWrap);
+    weekChunk = [];
+    weekNum++;
+  }
+
+  plan.days.forEach((day, i) => {
+    weekChunk.push(day);
+    if (weekChunk.length === 7) flushWeek();
+  });
+  flushWeek();
+}
+
+/* =========================================================================
+   TEXT-TO-SPEECH — pronunciation for vocab words
+   ========================================================================= */
+function speakWord(word) {
+  if (!('speechSynthesis' in window)) {
+    showToast('Энэ хөтөч дуудлага сонсох боломжгүй', 'error');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(word);
+  utter.lang = 'en-US';
+  utter.rate = 0.9;
+  window.speechSynthesis.speak(utter);
+}
+
+/* =========================================================================
+   INIT
+   ========================================================================= */
+function init() {
+  applyTheme(state.theme);
+  updateStreakOnLoad();
+  renderHeaderStats();
+  renderLevelWidget();
+  renderTaskList();
+  renderWeakSpots();
+  renderTopicGrid();
+  renderMistakeLog();
+  renderPastExamGrid();
+  renderVocab100();
+  renderStudyPlan();
+}
+
+init();
+</script>
+</body>
+</html>
